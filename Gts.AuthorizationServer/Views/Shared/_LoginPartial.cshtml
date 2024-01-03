@@ -7,16 +7,9 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        var result = await _authorizationService.AuthorizeAsync(User, "ViewUsers");
-        @if (result.Succeeded)
-        {
-            <li id="admin-link" class="nav-item">
-                <a class="nav-link text-dark" href="/Users">Панель администратора</a>
-            </li>
-            <li id="admin-link" class="nav-item">
-                <a class="nav-link text-dark" href="/Claim">Управление правами доступа</a>
-            </li>
-        }
+        <li id="admin-link" class="nav-item">
+            <a class="nav-link text-dark" href="/Users">Панель администратора</a>
+        </li>
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity!.Name</a>
         </li>

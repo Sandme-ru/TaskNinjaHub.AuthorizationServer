@@ -40,12 +40,4 @@
     <Folder Include="Pages\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Claim\Index.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\Claim\Index.cshtml" />
-  </ItemGroup>
-
 </Project>

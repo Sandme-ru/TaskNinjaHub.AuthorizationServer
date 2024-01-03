@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gts.AuthorizationServer", "Gts.AuthorizationServer\Gts.AuthorizationServer.csproj", "{BD8BF1F2-CCD4-47A7-8160-543BE77BC433}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gts.AuthorizationServer", "Gts.AuthorizationServer\Gts.AuthorizationServer.csproj", "{BD8BF1F2-CCD4-47A7-8160-543BE77BC433}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
