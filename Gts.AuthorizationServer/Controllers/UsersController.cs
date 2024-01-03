@@ -24,14 +24,11 @@ public class UsersController : Controller
         _authorizationService = authorizationService;
     }
 
-    [Authorize(Policy = "ViewUsers")]
     public IActionResult Index() => View(_userManager.Users.ToList());
 
-    [Authorize(Policy = "ViewUsers")]
     public IActionResult Create() => View();
 
     [HttpPost]
-    [Authorize(Policy = "AddUser")]
     public async Task<IActionResult> Create(CreateUserViewModel model)
     {
         _logger.LogInformation($"This is Create method of UsersController");
@@ -63,7 +60,6 @@ public class UsersController : Controller
         return View(model);
     }
 
-    [Authorize(Policy = "EditUser")]
     public async Task<IActionResult> Edit(string id)
     {
         _logger.LogInformation($"This is Edit method of UsersController");
@@ -86,7 +82,6 @@ public class UsersController : Controller
     }
 
     [HttpPost]
-    [Authorize(Policy = "EditUser")]
     public async Task<IActionResult> Edit(EditUserViewModel model)
     {
         _logger.LogInformation($"This is Edit method of UsersController");
@@ -119,7 +114,6 @@ public class UsersController : Controller
     }
 
     [HttpPost]
-    [Authorize(Policy = "ChangeUserStatus")]
     public async Task<ActionResult> ChangeStatus(string id)
     {
         var authorizationResult = await _authorizationService.AuthorizeAsync(User, "ChangeUserStatus");

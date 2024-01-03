@@ -16,3 +16,60 @@
 2023-11-01 00:16:33.0611 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\Gts.DemoAuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
 2023-11-01 00:16:33.0841 Info Configuration initialized.
 2023-11-01 00:16:33.7581 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\Gts.DemoAuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2024-01-03 16:58:52.4755 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-01-03 16:58:52.4942 Info Registered target NLog.Targets.FileTarget(Name=ownFile)
+2024-01-03 16:58:52.4942 Info Registered target NLog.Targets.ConsoleTarget(Name=console)
+2024-01-03 16:58:52.4942 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2024-01-03 16:58:52.4942 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2024-01-03 16:58:52.5118 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.5.2160. Product version: 5.2.5+7c014325443d65541200b698a50b9dd4ec30c7f0. GlobalAssemblyCache: False
+2024-01-03 16:58:52.5118 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\TaskNinjaHub.AuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2024-01-03 16:58:52.5315 Info Configuration initialized.
+2024-01-03 16:58:52.8456 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\TaskNinjaHub.AuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2024-01-03 16:59:11.7148 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-01-03 16:59:11.7148 Info Registered target NLog.Targets.FileTarget(Name=ownFile)
+2024-01-03 16:59:11.7148 Info Registered target NLog.Targets.ConsoleTarget(Name=console)
+2024-01-03 16:59:11.7148 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2024-01-03 16:59:11.7148 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2024-01-03 16:59:11.7336 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.5.2160. Product version: 5.2.5+7c014325443d65541200b698a50b9dd4ec30c7f0. GlobalAssemblyCache: False
+2024-01-03 16:59:11.7336 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\TaskNinjaHub.AuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2024-01-03 16:59:11.7548 Info Configuration initialized.
+2024-01-03 16:59:11.9450 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\TaskNinjaHub.AuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2024-01-03 16:59:13.7941 Info Shutdown() called. Logger closing...
+2024-01-03 16:59:13.7941 Info Closing old configuration.
+2024-01-03 16:59:13.7941 Info Logger has been closed down.
+2024-01-03 17:00:59.8500 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-01-03 17:00:59.8674 Info Registered target NLog.Targets.FileTarget(Name=ownFile)
+2024-01-03 17:00:59.8690 Info Registered target NLog.Targets.ConsoleTarget(Name=console)
+2024-01-03 17:00:59.8890 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2024-01-03 17:00:59.8890 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2024-01-03 17:00:59.9133 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.5.2160. Product version: 5.2.5+7c014325443d65541200b698a50b9dd4ec30c7f0. GlobalAssemblyCache: False
+2024-01-03 17:00:59.9328 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\TaskNinjaHub.AuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2024-01-03 17:00:59.9583 Info Configuration initialized.
+2024-01-03 17:01:01.4984 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\TaskNinjaHub.AuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2024-01-03 17:05:54.8703 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-01-03 17:05:55.5592 Info Registered target NLog.Targets.FileTarget(Name=ownFile)
+2024-01-03 17:05:55.5592 Info Registered target NLog.Targets.ConsoleTarget(Name=console)
+2024-01-03 17:05:55.5926 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2024-01-03 17:05:55.5926 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2024-01-03 17:05:55.6420 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.5.2160. Product version: 5.2.5+7c014325443d65541200b698a50b9dd4ec30c7f0. GlobalAssemblyCache: False
+2024-01-03 17:05:55.6623 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\TaskNinjaHub.AuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2024-01-03 17:05:55.6938 Info Configuration initialized.
+2024-01-03 17:05:56.5424 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\TaskNinjaHub.AuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2024-01-03 17:08:04.4048 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-01-03 17:08:04.4236 Info Registered target NLog.Targets.FileTarget(Name=ownFile)
+2024-01-03 17:08:04.4236 Info Registered target NLog.Targets.ConsoleTarget(Name=console)
+2024-01-03 17:08:04.4478 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2024-01-03 17:08:04.4478 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2024-01-03 17:08:04.4731 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.5.2160. Product version: 5.2.5+7c014325443d65541200b698a50b9dd4ec30c7f0. GlobalAssemblyCache: False
+2024-01-03 17:08:04.4944 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\TaskNinjaHub.AuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2024-01-03 17:08:04.5230 Info Configuration initialized.
+2024-01-03 17:08:05.3661 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\TaskNinjaHub.AuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2024-01-03 17:09:40.5847 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-01-03 17:09:40.6108 Info Registered target NLog.Targets.FileTarget(Name=ownFile)
+2024-01-03 17:09:40.6108 Info Registered target NLog.Targets.ConsoleTarget(Name=console)
+2024-01-03 17:09:40.6414 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2024-01-03 17:09:40.6414 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2024-01-03 17:09:40.6808 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.5.2160. Product version: 5.2.5+7c014325443d65541200b698a50b9dd4ec30c7f0. GlobalAssemblyCache: False
+2024-01-03 17:09:40.7074 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\TaskNinjaHub.AuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2024-01-03 17:09:40.7391 Info Configuration initialized.
+2024-01-03 17:09:41.4852 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\TaskNinjaHub.AuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config

@@ -1,4 +1,5 @@
 
+using Gts.AuthorizationServer.Context;
 using Gts.AuthorizationServer.Data;
 using Gts.AuthorizationServer.Data.AuthorizationPolicy;
 using Gts.AuthorizationServer.DependencyInjection.OpenIddict;
@@ -32,19 +33,12 @@ try
     #region DBCONTEXT
 
     const string defaultConnection = "DefaultConnection";
-    const string claimConnection = "ClaimConnection";
 
     builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
         options.UseNpgsql(builder.Configuration.GetConnectionString(defaultConnection) ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found."));
         options.UseOpenIddict();
-    });
-
-    builder.Services.AddScoped<IClaimDbContext>(provider => provider.GetRequiredService<ClaimDbContext>());
-    builder.Services.AddDbContext<ClaimDbContext>(options =>
-    {
-        options.UseNpgsql(builder.Configuration.GetConnectionString(claimConnection) ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found."));
     });
 
     #endregion

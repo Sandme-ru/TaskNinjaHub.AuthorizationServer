@@ -1,4 +1,4 @@
-using Gts.AuthorizationServer.Data;
+using Gts.AuthorizationServer.Context;
 using OpenIddict.Abstractions;
 
 namespace Gts.AuthorizationServer.Models.Workers;
