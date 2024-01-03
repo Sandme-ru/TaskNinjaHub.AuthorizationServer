@@ -35,32 +35,26 @@ public class OpenIddictWorker : IHostedService
 
         var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
-        var client = await manager.FindByClientIdAsync("GTS");
+        var client = await manager.FindByClientIdAsync("TaskNinjaHub");
         if (client != null)
             await manager.DeleteAsync(client);
         
-        if (await manager.FindByClientIdAsync("GTS") == null)
+        if (await manager.FindByClientIdAsync("TaskNinjaHub") == null)
         {
             await manager.CreateAsync(new OpenIddictApplicationDescriptor
             {
-                ClientId = "GTS",
+                ClientId = "TaskNinjaHub",
                 ClientSecret = "901564A5-E7FE-42CB-B10D-61EF6A8F3655",
                 ConsentType = OpenIddictConstants.ConsentTypes.Implicit,
-                DisplayName = "GTS",
+                DisplayName = "TaskNinjaHub",
                 RedirectUris =
                 {
-                    new Uri("https://localhost:5132"),
-                    new Uri("https://localhost:5132/signin-oidc"),
-                    new Uri("https://localhost:7097"),
-                    new Uri("https://localhost:7097/signin-oidc"),
-                    new Uri("https://localhost:7060"),
-                    new Uri("https://localhost:7060/signin-oidc"),
+                    new Uri("https://localhost:7063"),
+                    new Uri("https://localhost:7063/signin-oidc")
                 },
                 PostLogoutRedirectUris =
                 {
-                    new Uri("https://localhost:5132/signout-callback-oidc"),
-                    new Uri("https://localhost:7097/signout-callback-oidc"),
-                    new Uri("https://localhost:7060/signout-callback-oidc"),
+                    new Uri("https://localhost:7063/signout-callback-oidc")
                 },
                 Permissions =
                 {
