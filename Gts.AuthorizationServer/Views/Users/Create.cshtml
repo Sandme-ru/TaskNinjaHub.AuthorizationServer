@@ -30,6 +30,15 @@
         <input id="PhoneNumber" type="text" asp-for="PhoneNumber" class="form-control" />
     </div>
     <div class="mb-3">
+        <label class="form-label">Выберите роль</label>
+        <select asp-for="SelectedRole" class="form-select" name="selectedRole">
+            @foreach (var role in ViewBag.Roles)
+            {
+                <option value="@role.Name">@role.Name</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
         <input type="submit" value="Добавить" class="btn btn-primary btn-login" />
     </div>
 </form>
