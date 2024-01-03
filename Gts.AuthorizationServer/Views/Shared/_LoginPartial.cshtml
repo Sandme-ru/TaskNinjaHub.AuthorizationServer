@@ -1,0 +1,38 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Gts.AuthorizationServer.Models.Users
+@using Microsoft.AspNetCore.Authorization
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IAuthorizationService _authorizationService
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        var result = await _authorizationService.AuthorizeAsync(User, "ViewUsers");
+        @if (result.Succeeded)
+        {
+            <li id="admin-link" class="nav-item">
+                <a class="nav-link text-dark" href="/Users">Панель администратора</a>
+            </li>
+            <li id="admin-link" class="nav-item">
+                <a class="nav-link text-dark" href="/Claim">Управление правами доступа</a>
+            </li>
+        }
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity!.Name</a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-link text-dark">Выйти</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Регистрация</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Войти</a>
+        </li>
+    }
+</ul>

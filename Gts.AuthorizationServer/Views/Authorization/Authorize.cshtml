@@ -1,0 +1,18 @@
+﻿@using Microsoft.Extensions.Primitives
+@model Gts.AuthorizationServer.ViewModels.Authorization.AuthorizeViewModel
+
+<div class="jumbotron">
+    <h1>Авторизация</h1>
+
+    <p class="lead text-left">Хотите ли вы предоставить <strong>@Model.ApplicationName</strong> доступ к вашим данным? (scopes requested: @Model.Scope)</p>
+
+    <form asp-controller="Authorization" asp-action="Authorize" method="post">
+        @foreach (var parameter in Context.Request.HasFormContentType ? (IEnumerable<KeyValuePair<string, StringValues>>) Context.Request.Form : Context.Request.Query)
+        {
+            <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
+        }
+
+        <input class="btn btn-lg btn-success" name="submit.Accept" type="submit" value="Yes" />
+        <input class="btn btn-lg btn-danger" name="submit.Deny" type="submit" value="No" />
+    </form>
+</div>

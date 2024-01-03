@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  db:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: GtsAuthorizationServer
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123qweASD!@#
+    ports:
+      - "5432:5432" 
+    networks:
+      - auth-server-dev
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  web:
+    container_name: auth-server
+    build: 
+      context: ../
+      dockerfile: ./Gts.AuthorizationServer/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - auth-server-dev
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - db
+volumes:
+  postgres-data:
+networks:
+  auth-server-dev:
+    driver: bridge

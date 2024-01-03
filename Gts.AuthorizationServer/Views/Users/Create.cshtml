@@ -1,0 +1,35 @@
+﻿@model Gts.AuthorizationServer.ViewModels.Users.CreateUserViewModel
+@{
+    ViewBag.Title = "Добавление пользователя";
+}
+
+<form asp-action="Create" asp-controller="Users">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input type="text" asp-for="Email" class="form-control" autocomplete="off" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label">Пароль</label>
+        <input type="password" asp-for="Password" class="form-control" autocomplete="new-password" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="FirstName" class="form-label">Имя</label>
+        <input type="text" asp-for="FirstName" class="form-control" />
+    </div>  
+    <div class="mb-3">
+        <label asp-for="LastName" class="form-label">Фамилия</label>
+        <input type="text" asp-for="LastName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="MiddleName" class="form-label">Отчество</label>
+        <input type="text" asp-for="MiddleName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="PhoneNumber" class="form-label">Номер телефона</label>
+        <input id="PhoneNumber" type="text" asp-for="PhoneNumber" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <input type="submit" value="Добавить" class="btn btn-primary btn-login" />
+    </div>
+</form>

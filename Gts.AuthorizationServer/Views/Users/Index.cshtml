@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Gts.AuthorizationServer.Models.Users.ApplicationUser>
+@{
+    ViewBag.Title = "Список пользователей";
+}
+
+<a asp-action="Create">Добавить пользователя</a>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Логин</th>
+                <th>Email</th>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th class="d-none d-md-table-cell">Отчество</th>
+                <th class="d-none d-md-table-cell">Номер телефона</th>
+                <th class="d-none d-md-table-cell">Дата создания</th>
+                <th class="d-none d-md-table-cell">Последний вход</th>
+                <th class="d-none d-md-table-cell">Активен</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>@user.FirstName</td>
+                    <td>@user.LastName</td>
+                    <td class="d-none d-md-table-cell">@user.MiddleName</td>
+                    <td class="d-none d-md-table-cell">@user.PhoneNumber</td>
+                    <td class="d-none d-md-table-cell">@user.CreateDate.ToString("F")</td>
+                    <td class="d-none d-md-table-cell">@user.LastLoginDate.ToString("F")</td>
+                    <td class="d-none d-md-table-cell">@user.IsActive</td>
+                    <td>
+                        <form asp-action="ChangeStatus" asp-route-id="@user.Id" method="post">
+                            <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@user.Id">Изменить</a>
+                            @if (user.IsActive)
+                            {
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    Деактивировать
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    Активировать
+                                </button>
+                            }
+
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

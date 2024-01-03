@@ -1,0 +1,15 @@
+﻿@using Microsoft.Extensions.Primitives
+
+<div class="jumbotron">
+    <h1>Выход</h1>
+    <p class="lead text-left">Вы уверены, что хотите выйти?</p>
+
+    <form asp-controller="Authorization" asp-action="Logout" method="post">
+        @foreach (var parameter in Context.Request.HasFormContentType ? (IEnumerable<KeyValuePair<string, StringValues>>) Context.Request.Form : Context.Request.Query)
+        {
+            <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
+        }
+
+        <input class="btn btn-lg btn-success" name="Confirm" type="submit" value="Да" />
+    </form>
+</div>

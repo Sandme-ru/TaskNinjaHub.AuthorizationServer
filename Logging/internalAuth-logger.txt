@@ -1,0 +1,18 @@
+2023-11-01 00:14:28.1328 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2023-11-01 00:14:28.1517 Info Registered target NLog.Targets.FileTarget(Name=ownFile)
+2023-11-01 00:14:28.1517 Info Registered target NLog.Targets.ConsoleTarget(Name=console)
+2023-11-01 00:14:28.1742 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2023-11-01 00:14:28.1762 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2023-11-01 00:14:28.1939 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.5.2160. Product version: 5.2.5+7c014325443d65541200b698a50b9dd4ec30c7f0. GlobalAssemblyCache: False
+2023-11-01 00:14:28.2116 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\Gts.DemoAuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2023-11-01 00:14:28.2401 Info Configuration initialized.
+2023-11-01 00:14:28.9374 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\Gts.DemoAuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2023-11-01 00:16:32.9764 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2023-11-01 00:16:33.0111 Info Registered target NLog.Targets.FileTarget(Name=ownFile)
+2023-11-01 00:16:33.0111 Info Registered target NLog.Targets.ConsoleTarget(Name=console)
+2023-11-01 00:16:33.0315 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2023-11-01 00:16:33.0315 Info Registered target NLog.Targets.MailTarget(Name=firstMail)
+2023-11-01 00:16:33.0490 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.5.2160. Product version: 5.2.5+7c014325443d65541200b698a50b9dd4ec30c7f0. GlobalAssemblyCache: False
+2023-11-01 00:16:33.0611 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\Gts.DemoAuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
+2023-11-01 00:16:33.0841 Info Configuration initialized.
+2023-11-01 00:16:33.7581 Info Validating config: TargetNames=allfile, console, ownFile, firstMail, ConfigItems=104, FilePath=C:\Users\Matth\source\repos\Gts.DemoAuthorizationServer\Gts.AuthorizationServer\bin\Debug\net7.0\NLog.config
