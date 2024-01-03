@@ -40,4 +40,6 @@ public class CreateUserViewModel
     /// </summary>
     /// <value>The phone number.</value>
     public string PhoneNumber { get; set; }
+
+    public string SelectedRole { get; set; }
 }

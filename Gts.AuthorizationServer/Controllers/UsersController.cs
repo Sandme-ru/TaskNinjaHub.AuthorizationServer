@@ -3,6 +3,7 @@ using Gts.AuthorizationServer.ViewModels.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gts.AuthorizationServer.Controllers;
 
@@ -16,6 +17,8 @@ public class UsersController : Controller
 
     private readonly IAuthorizationService _authorizationService;
 
+
+
     public UsersController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ILogger<UserinfoController> logger, IAuthorizationService authorizationService)
     {
         _userManager = userManager;
@@ -26,7 +29,11 @@ public class UsersController : Controller
 
     public IActionResult Index() => View(_userManager.Users.ToList());
 
-    public IActionResult Create() => View();
+    public async Task<IActionResult> Create()
+    {
+        ViewBag.Roles = await _roleManager.Roles.ToListAsync();
+        return View();
+    }
 
     [HttpPost]
     public async Task<IActionResult> Create(CreateUserViewModel model)
@@ -45,7 +52,7 @@ public class UsersController : Controller
                 CreateDate = DateTimeOffset.UtcNow
             };
             var result = await _userManager.CreateAsync(user, model.Password);
-            var identityResult = await _userManager.AddToRoleAsync(user, "Client");
+            var identityResult = await _userManager.AddToRoleAsync(user, model.SelectedRole);
 
             if (result.Succeeded)
                 return RedirectToAction("Index");
@@ -57,6 +64,7 @@ public class UsersController : Controller
                 }
             }
         }
+        ViewBag.Roles = await _roleManager.Roles.ToListAsync();
         return View(model);
     }
 
@@ -68,6 +76,8 @@ public class UsersController : Controller
         if (user == null)
             return NotFound();
 
+        ViewBag.Roles = await _roleManager.Roles.ToListAsync();
+
         var model = new EditUserViewModel
         {
             Id = user.Id,
@@ -76,7 +86,8 @@ public class UsersController : Controller
             LastName = user.LastName,
             MiddleName = user.MiddleName,
             PhoneNumber = user.PhoneNumber,
-            IsActive = user.IsActive
+            IsActive = user.IsActive,
+            SelectedRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault()!
         };
         return View(model);
     }
@@ -98,18 +109,25 @@ public class UsersController : Controller
                 user.PhoneNumber = model.PhoneNumber;
                 user.IsActive = model.IsActive;
 
-                var result = await _userManager.UpdateAsync(user);
-                if (result.Succeeded)
+                var roles = await _userManager.GetRolesAsync(user);
+                var removeRolesResult = await _userManager.RemoveFromRolesAsync(user, roles);
+
+                var addRoleResult = await _userManager.AddToRoleAsync(user, model.SelectedRole);
+                var updateUserResult = await _userManager.UpdateAsync(user);
+
+                if (removeRolesResult.Succeeded && addRoleResult.Succeeded && updateUserResult.Succeeded)
                     return RedirectToAction("Index");
                 else
                 {
-                    foreach (var error in result.Errors)
+                    foreach (var error in updateUserResult.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
             }
         }
+        ViewBag.Roles = await _roleManager.Roles.ToListAsync();
+
         return View(model);
     }
 

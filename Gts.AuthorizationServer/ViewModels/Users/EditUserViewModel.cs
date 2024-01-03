@@ -46,4 +46,6 @@ public class EditUserViewModel
     /// </summary>
     /// <value><c>true</c> if this instance is active; otherwise, <c>false</c>.</value>
     public bool IsActive { get; set; }
+
+    public string SelectedRole { get; set; }
 }
