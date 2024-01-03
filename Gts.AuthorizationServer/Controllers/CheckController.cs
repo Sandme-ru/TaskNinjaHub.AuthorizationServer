@@ -48,7 +48,7 @@ public class CheckController : Controller
     /// <returns>IActionResult.</returns>
     public async Task<IActionResult> Index()
     {
-        Request.Cookies.TryGetValue(".ASPXAUTH_MENTORSDIARY_USERNAME", out var userNameCookie);
+        Request.Cookies.TryGetValue(".ASPXAUTH_EDISON_USERNAME", out var userNameCookie);
 
         if(userNameCookie == null)
             return Challenge(
