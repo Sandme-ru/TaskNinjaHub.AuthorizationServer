@@ -141,7 +141,7 @@ public class AuthorizationController : Controller
                         .SetClaim("last_name", $"{user.LastName}")
                         .SetClaim("middle_name", $"{user.MiddleName}")
                         .SetClaim("short_name", $"{user.ShortName}")
-                        .SetClaims(OpenIddictConstants.Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray());
+                        .SetClaims("role_name", (await _userManager.GetRolesAsync(user)).ToImmutableArray());
 
                 // Note: in this sample, the granted scopes match the requested scope
                 // but you may want to allow the user to uncheck specific scopes.
@@ -287,7 +287,7 @@ public class AuthorizationController : Controller
                         .SetClaim("last_name", $"{user.LastName}")
                         .SetClaim("middle_name", $"{user.MiddleName}")
                         .SetClaim("short_name", $"{user.ShortName}")
-                        .SetClaims(OpenIddictConstants.Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray());
+                        .SetClaims("role_name", (await _userManager.GetRolesAsync(user)).ToImmutableArray());
 
                 // Note: in this sample, the granted scopes match the requested scope
                 // but you may want to allow the user to uncheck specific scopes.
@@ -569,6 +569,7 @@ public class AuthorizationController : Controller
             case "AspNet.Identity.SecurityStamp": yield break;
 
             case "last_name":
+            case "role_name":
             case "first_name":
             case "middle_name":
             case "short_name":
