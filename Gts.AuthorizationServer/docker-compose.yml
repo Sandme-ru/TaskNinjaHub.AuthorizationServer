@@ -4,7 +4,7 @@ services:
     container_name: postgres
     image: postgres:latest
     environment:
-      POSTGRES_DB: GtsAuthorizationServer
+      POSTGRES_DB: AuthorizationServer
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123qweASD!@#
     ports:
