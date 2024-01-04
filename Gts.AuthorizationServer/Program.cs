@@ -32,8 +32,15 @@ try
 {
     #region DBCONTEXT
 
+    #if (DEBUG)
+
     const string defaultConnection = "DefaultConnection";
 
+    #elif (RELEASE)
+
+    const string defaultConnection = "ReleaseConnection";
+
+    #endif
     builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
@@ -41,7 +48,7 @@ try
         options.UseOpenIddict();
     });
 
-    #endregion
+#endregion
 
     #region AUTHENTICATION
 
