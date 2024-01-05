@@ -141,6 +141,7 @@ public class AuthorizationController : Controller
                         .SetClaim("last_name", $"{user.LastName}")
                         .SetClaim("middle_name", $"{user.MiddleName}")
                         .SetClaim("short_name", $"{user.ShortName}")
+                        .SetClaim("email_value", $"{user.Email}")
                         .SetClaims("role_name", (await _userManager.GetRolesAsync(user)).ToImmutableArray());
 
                 // Note: in this sample, the granted scopes match the requested scope
@@ -287,6 +288,7 @@ public class AuthorizationController : Controller
                         .SetClaim("last_name", $"{user.LastName}")
                         .SetClaim("middle_name", $"{user.MiddleName}")
                         .SetClaim("short_name", $"{user.ShortName}")
+                        .SetClaim("email_value", $"{user.Email}")
                         .SetClaims("role_name", (await _userManager.GetRolesAsync(user)).ToImmutableArray());
 
                 // Note: in this sample, the granted scopes match the requested scope
@@ -382,7 +384,10 @@ public class AuthorizationController : Controller
         identity.SetClaim(OpenIddictConstants.Claims.Subject, await _userManager.GetUserIdAsync(user))
                 .SetClaim(OpenIddictConstants.Claims.Email, await _userManager.GetEmailAsync(user))
                 .SetClaim(OpenIddictConstants.Claims.Name, await _userManager.GetUserNameAsync(user))
-                .SetClaims(OpenIddictConstants.Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray());
+                .SetClaims(OpenIddictConstants.Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray())
+                .SetClaim("short_name", $"{user.ShortName}")
+            .SetClaim("email_value", $"{user.Email}")
+            .SetClaims("role_name", (await _userManager.GetRolesAsync(user)).ToImmutableArray());
 
         // Note: in this sample, the granted scopes match the requested scope
         // but you may want to allow the user to uncheck specific scopes.
@@ -481,7 +486,10 @@ public class AuthorizationController : Controller
             identity.SetClaim(OpenIddictConstants.Claims.Subject, await _userManager.GetUserIdAsync(user))
                     .SetClaim(OpenIddictConstants.Claims.Email, await _userManager.GetEmailAsync(user))
                     .SetClaim(OpenIddictConstants.Claims.Name, await _userManager.GetUserNameAsync(user))
-                    .SetClaims(OpenIddictConstants.Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray());
+                    .SetClaims(OpenIddictConstants.Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray())
+                    .SetClaim("short_name", $"{user.ShortName}")
+                    .SetClaim("email_value", $"{user.Email}")
+                    .SetClaims("role_name", (await _userManager.GetRolesAsync(user)).ToImmutableArray());
 
             identity.SetDestinations(GetDestinations);
 
@@ -523,7 +531,10 @@ public class AuthorizationController : Controller
             identity.SetClaim(OpenIddictConstants.Claims.Subject, await _userManager.GetUserIdAsync(user))
                     .SetClaim(OpenIddictConstants.Claims.Email, await _userManager.GetEmailAsync(user))
                     .SetClaim(OpenIddictConstants.Claims.Name, await _userManager.GetUserNameAsync(user))
-                    .SetClaims(OpenIddictConstants.Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray());
+                    .SetClaims(OpenIddictConstants.Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray())
+                    .SetClaim("short_name", $"{user.ShortName}")
+                    .SetClaim("email_value", $"{user.Email}")
+                    .SetClaims("role_name", (await _userManager.GetRolesAsync(user)).ToImmutableArray());
 
             identity.SetDestinations(GetDestinations);
 
@@ -569,10 +580,11 @@ public class AuthorizationController : Controller
             case "AspNet.Identity.SecurityStamp": yield break;
 
             case "last_name":
-            case "role_name":
             case "first_name":
             case "middle_name":
             case "short_name":
+            case "role_name":
+            case "email_value":
 
                 yield return OpenIddictConstants.Destinations.AccessToken;
 
