@@ -8,7 +8,7 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <li id="admin-link" class="nav-item">
-            <a class="nav-link text-dark" href="/Users">Панель администратора</a>
+            <a class="nav-link text-dark" asp-controller="Users" asp-action="Index">Панель администратора</a>
         </li>
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity!.Name</a>
