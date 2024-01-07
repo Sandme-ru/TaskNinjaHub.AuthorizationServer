@@ -112,6 +112,12 @@ try
     app.UseHttpsRedirection();
     app.UseStaticFiles();
 
+    using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+    {
+        var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        dbContext.MigrateDatabase();
+    }
+
     app.UseRouting();
 
     app.UseCors();
