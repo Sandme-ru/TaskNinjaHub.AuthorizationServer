@@ -411,6 +411,12 @@ public class AuthorizationController : Controller
         // Returning a SignInResult will ask OpenIddict to issue the appropriate access/identity tokens.
         return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
     }
+    private void RemoveCookies()
+    {
+        var cookies = Request.Cookies.Keys.Where(k => k.StartsWith("Edison"));
+        foreach (var cookie in cookies)
+            Response.Cookies.Delete(cookie);
+    }
 
     [Authorize, FormValueRequired("submit.Deny")]
     [HttpPost("~/connect/authorize/deny"), ValidateAntiForgeryToken]
@@ -426,32 +432,40 @@ public class AuthorizationController : Controller
     {
         var request = HttpContext.GetOpenIddictServerRequest();
 
-        // Ask ASP.NET Core Identity to delete the local and external cookies created
-        // when the user agent is redirected from the external identity provider
-        // after a successful authentication flow (e.g Google or Facebook).
-        await _signInManager.SignOutAsync();
-
-        var application = await _applicationManager.FindByClientIdAsync("edison");
-        if (application != null)
+        if (request == null)
         {
-            var postLogoutRedirectUris = await _applicationManager.GetPostLogoutRedirectUrisAsync(application);
-            if (postLogoutRedirectUris.All(a => !a.Equals(request?.PostLogoutRedirectUri)))
-                Response.Cookies.Delete(LegacyAuthCookieCompatDefaults.CookieAuth);
+            foreach (var cookie in Request.Cookies.Keys)
+                Response.Cookies.Delete(cookie);
+
+            return Redirect("/auth-server");
         }
+        else
+        {
+            // Ask ASP.NET Core Identity to delete the local and external cookies created
+            // when the user agent is redirected from the external identity provider
+            // after a successful authentication flow (e.g Google or Facebook).
+            await _signInManager.SignOutAsync();
 
-        var cookies = Request.Cookies.Keys.Where(k => k.StartsWith("Edison"));
-        foreach (var cookie in cookies)
-            Response.Cookies.Delete(cookie);
-
-        // Returning a SignOutResult will ask OpenIddict to redirect the user agent
-        // to the post_logout_redirect_uri specified by the client application or to
-        // the RedirectUri specified in the authentication properties if none was set.
-        return SignOut(
-            authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-            properties: new AuthenticationProperties
+            var application = await _applicationManager.FindByClientIdAsync("GTS");
+            if (application != null)
             {
-                RedirectUri = "/"
-            });
+                var postLogoutRedirectUris = await _applicationManager.GetPostLogoutRedirectUrisAsync(application);
+                if (postLogoutRedirectUris.All(a => !a.Equals(request?.PostLogoutRedirectUri)))
+                    Response.Cookies.Delete(LegacyAuthCookieCompatDefaults.CookieAuth);
+            }
+
+            RemoveCookies();
+
+            // Returning a SignOutResult will ask OpenIddict to redirect the user agent
+            // to the post_logout_redirect_uri specified by the client application or to
+            // the RedirectUri specified in the authentication properties if none was set.
+            return SignOut(
+                authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+                properties: new AuthenticationProperties
+                {
+                    RedirectUri = "/"
+                });
+        }
     }
 
     [HttpPost("~/connect/token")]
