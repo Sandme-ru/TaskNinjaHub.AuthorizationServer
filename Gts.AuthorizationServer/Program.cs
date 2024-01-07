@@ -7,6 +7,7 @@ using Gts.AuthorizationServer.Models.Users;
 using Gts.AuthorizationServer.Services.Store.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NLog;
@@ -93,19 +94,40 @@ try
     builder.Services.AddRazorPages();
     builder.Services.AddSwaggerGen();
 
+    builder.Services.Configure<OpenIddictServerAspNetCoreBuilder>(options =>
+    {
+        options.DisableTransportSecurityRequirement();
+    });
+
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders =
+            ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    });
+
     builder.Services.AddSingleton<IClaimStore, ClaimStore>();
 
     var app = builder.Build();
+
+    var forwardedHeaderOptions = new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    };
+
+    forwardedHeaderOptions.KnownNetworks.Clear();
+    forwardedHeaderOptions.KnownProxies.Clear();
 
     if (app.Environment.IsDevelopment())
     {
         app.UseMigrationsEndPoint();
         app.UseSwagger();
         app.UseSwaggerUI();
+        app.UseForwardedHeaders(forwardedHeaderOptions);
     }
     else
     {
         app.UseExceptionHandler("/Error");
+        app.UseForwardedHeaders(forwardedHeaderOptions);
         app.UseHsts();
     }
 
