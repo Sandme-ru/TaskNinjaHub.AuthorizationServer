@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gts.AuthorizationServer.Controllers;
 
-[Route("[controller]/[action]")]
+[Route("auth-server/[controller]/[action]")]
 public class UsersController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
