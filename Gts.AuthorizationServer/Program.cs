@@ -152,9 +152,9 @@ try
         endpoints.MapControllers();
         endpoints.MapDefaultControllerRoute();
         endpoints.MapRazorPages();
-        endpoints.MapGet("/auth-server", context =>
+        endpoints.MapGet("/", context =>
         {
-            context.Response.Redirect("/account/login");
+            context.Response.Redirect("/auth-server/account/login");
             return Task.CompletedTask;
         });
     });
