@@ -52,6 +52,7 @@ public class OpenIddictWorker : IHostedService
                     new Uri("https://localhost:7063"),
                     new Uri("https://localhost:7063/signin-oidc"),
                     new Uri("https://sandme.ru"),
+                    new Uri("https://sandme.ru/auth-server"),
                     new Uri("https://sandme.ru/signin-oidc"),
                     new Uri("http://127.0.0.1/TaskNinjaHub.Desktop")
                 },
