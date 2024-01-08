@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gts.AuthorizationServer.Controllers;
 
-[Route("auth-server")]
+[Route("")]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gts.AuthorizationServer.Controllers
 {
-    [Route("auth-server/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AdminController : Controller
     {

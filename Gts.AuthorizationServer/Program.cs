@@ -153,7 +153,7 @@ try
         endpoints.MapRazorPages();
         endpoints.MapGet("/", context =>
         {
-            context.Response.Redirect("/auth-server/account/login");
+            context.Response.Redirect("/account/login");
             return Task.CompletedTask;
         });
     });
