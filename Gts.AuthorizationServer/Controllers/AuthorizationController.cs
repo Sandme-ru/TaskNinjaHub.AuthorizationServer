@@ -437,7 +437,7 @@ public class AuthorizationController : Controller
             foreach (var cookie in Request.Cookies.Keys)
                 Response.Cookies.Delete(cookie);
 
-            return Redirect("/auth-server");
+            return Redirect("/");
         }
         else
         {
