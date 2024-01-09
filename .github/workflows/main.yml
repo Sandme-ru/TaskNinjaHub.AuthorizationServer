@@ -1,7 +1,9 @@
 name: Deploy
 
 on:
-  workflow_dispatch
+  push:
+    branches:
+      - master
 
 env:
   SERVER_HOST: 54.39.207.182
