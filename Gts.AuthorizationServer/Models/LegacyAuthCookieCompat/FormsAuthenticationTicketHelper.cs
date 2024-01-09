@@ -94,9 +94,7 @@ internal static class FormsAuthenticationTicketHelper
 
                     // Step 9: Read the ticket cookie path from the stream.
                     // LENGTH: 1+ bytes (7-bit encoded integer char count + UTF-16LE payload)
-                    
-                    //var ticketCookiePath = ticketReader.ReadBinaryString();
-                    var ticketCookiePath = "/";
+                    var ticketCookiePath = ticketReader.ReadBinaryString();
 
                     // Step 10: Read the footer from the stream.
                     // LENGTH: 1 byte
