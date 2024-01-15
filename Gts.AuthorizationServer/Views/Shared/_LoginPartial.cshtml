@@ -1,8 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Gts.AuthorizationServer.Models.Users
-@using Microsoft.AspNetCore.Authorization
+
 @inject SignInManager<ApplicationUser> SignInManager
-@inject IAuthorizationService _authorizationService
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))

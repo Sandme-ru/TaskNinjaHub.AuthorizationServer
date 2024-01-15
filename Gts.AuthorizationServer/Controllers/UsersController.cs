@@ -17,9 +17,7 @@ public class UsersController : Controller
     private readonly ILogger<UserinfoController> _logger;
 
     private readonly IAuthorizationService _authorizationService;
-
-
-
+    
     public UsersController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ILogger<UserinfoController> logger, IAuthorizationService authorizationService)
     {
         _userManager = userManager;
@@ -40,9 +38,10 @@ public class UsersController : Controller
     public async Task<IActionResult> Create(CreateUserViewModel model)
     {
         _logger.LogInformation($"This is Create method of UsersController");
+
         if (ModelState.IsValid)
         {
-            var user = new ApplicationUser
+            var createdUser = new ApplicationUser
             {
                 Email = model.Email,
                 UserName = model.Email,
@@ -52,19 +51,17 @@ public class UsersController : Controller
                 PhoneNumber = model.PhoneNumber,
                 CreateDate = DateTimeOffset.UtcNow
             };
-            var result = await _userManager.CreateAsync(user, model.Password);
-            var identityResult = await _userManager.AddToRoleAsync(user, model.SelectedRole);
 
-            if (result.Succeeded)
+            var result = await _userManager.CreateAsync(createdUser, model.Password);
+            var identityResult = await _userManager.AddToRoleAsync(createdUser, model.SelectedRole);
+
+            if (result.Succeeded && identityResult.Succeeded)
                 return RedirectToAction("Index");
             else
-            {
                 foreach (var error in result.Errors)
-                {
                     ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
         }
+
         ViewBag.Roles = await _roleManager.Roles.ToListAsync();
         return View(model);
     }
@@ -72,24 +69,26 @@ public class UsersController : Controller
     public async Task<IActionResult> Edit(string id)
     {
         _logger.LogInformation($"This is Edit method of UsersController");
-        var user = await _userManager.FindByIdAsync(id);
-
-        if (user == null)
-            return NotFound();
 
         ViewBag.Roles = await _roleManager.Roles.ToListAsync();
 
+        var editedUser = await _userManager.FindByIdAsync(id);
+
+        if (editedUser == null)
+            return NotFound();
+        
         var model = new EditUserViewModel
         {
-            Id = user.Id,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            MiddleName = user.MiddleName,
-            PhoneNumber = user.PhoneNumber,
-            IsActive = user.IsActive,
-            SelectedRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault()!
+            Id = editedUser.Id,
+            Email = editedUser.Email!,
+            FirstName = editedUser.FirstName!,
+            LastName = editedUser.LastName!,
+            MiddleName = editedUser.MiddleName!,
+            PhoneNumber = editedUser.PhoneNumber!,
+            IsActive = editedUser.IsActive,
+            SelectedRole = (await _userManager.GetRolesAsync(editedUser)).FirstOrDefault()!
         };
+
         return View(model);
     }
 
@@ -97,6 +96,7 @@ public class UsersController : Controller
     public async Task<IActionResult> Edit(EditUserViewModel model)
     {
         _logger.LogInformation($"This is Edit method of UsersController");
+
         if (ModelState.IsValid)
         {
             var user = await _userManager.FindByIdAsync(model.Id.ToString());
@@ -119,14 +119,11 @@ public class UsersController : Controller
                 if (removeRolesResult.Succeeded && addRoleResult.Succeeded && updateUserResult.Succeeded)
                     return RedirectToAction("Index");
                 else
-                {
                     foreach (var error in updateUserResult.Errors)
-                    {
                         ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                }
             }
         }
+
         ViewBag.Roles = await _roleManager.Roles.ToListAsync();
 
         return View(model);
@@ -149,9 +146,7 @@ public class UsersController : Controller
                     return RedirectToAction("Index");
             }
             else
-            {
                 ModelState.AddModelError(string.Empty, "Ошибка деактивации");
-            }
         }
         else
         {
