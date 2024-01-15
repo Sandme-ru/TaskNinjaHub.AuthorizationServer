@@ -1,10 +1,6 @@
-using Gts.AuthorizationServer.Context;
-using Gts.AuthorizationServer.Data;
-using Gts.AuthorizationServer.Data.AuthorizationPolicy;
+Ôªøusing Gts.AuthorizationServer.Context;
 using Gts.AuthorizationServer.DependencyInjection.OpenIddict;
 using Gts.AuthorizationServer.Models.Users;
-using Gts.AuthorizationServer.Services.Store.Claims;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
@@ -44,11 +40,11 @@ try
     builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
-        options.UseNpgsql(builder.Configuration.GetConnectionString(defaultConnection) ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found."));
+        options.UseNpgsql(builder.Configuration.GetConnectionString(defaultConnection) ?? throw new InvalidOperationException("Connection string not found."));
         options.UseOpenIddict();
     });
 
-#endregion
+    #endregion
 
     #region AUTHENTICATION
 
@@ -61,8 +57,7 @@ try
 
     builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
         {
-            options.User.AllowedUserNameCharacters =
-                "‡·‚„‰Â∏ÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ¿¡¬√ƒ≈®∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            options.User.AllowedUserNameCharacters = "–∞–±–≤–≥–¥–µ—ë–∂–∑–∏–π–∫–ª–º–Ω–æ–ø—Ä—Å—Ç—É—Ñ—Ö—Ü—á—à—â—ä—ã—å—ç—é—è–ê–ë–í–ì–î–ï–Å–ñ–ó–ò–ô–ö–õ–ú–ù–û–ü–†–°–¢–£–§–•–¶–ß–®–©–™–´–¨–≠–Æ–ØabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             options.Password.RequireDigit = false;
             options.Password.RequireLowercase = false;
             options.Password.RequireNonAlphanumeric = false;
@@ -77,15 +72,7 @@ try
         .AddDefaultUI();
 
     #endregion
-
-    #region POLICY
-
-    builder.Services.AddSingleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>();
-    builder.Services.AddSingleton<IAuthorizationPolicyProviderService, AuthorizationPolicyProviderService>();
-    builder.Services.AddSingleton<IUserProvider, UserProvider>();
-
-    #endregion
-
+    
     builder.Services.AddDataProtection()
         .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "Keys")));
 
@@ -100,11 +87,8 @@ try
 
     builder.Services.Configure<ForwardedHeadersOptions>(options =>
     {
-        options.ForwardedHeaders =
-            ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
     });
-
-    builder.Services.AddSingleton<IClaimStore, ClaimStore>();
 
     var app = builder.Build();
 
@@ -146,17 +130,21 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
+    #pragma warning disable ASP0014 // Suggest using top level route registrations
     app.UseEndpoints(endpoints =>
     {
         endpoints.MapControllers();
         endpoints.MapDefaultControllerRoute();
         endpoints.MapRazorPages();
+        #if (RELEASE)
         endpoints.MapGet("/", context =>
         {
             context.Response.Redirect("/account/login");
             return Task.CompletedTask;
         });
+        #endif
     });
+    #pragma warning restore ASP0014 // Suggest using top level route registrations
 
     app.Run();
 }

@@ -3,7 +3,6 @@ using Gts.AuthorizationServer.Models.Authentication;
 using Gts.AuthorizationServer.Models.LegacyAuthCookieCompat;
 using Gts.AuthorizationServer.Models.Users;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -22,6 +21,9 @@ public class LoginModel : PageModel
     /// </summary>
     private readonly SignInManager<ApplicationUser> _signInManager;
 
+    /// <summary>
+    /// The user manager
+    /// </summary>
     private readonly UserManager<ApplicationUser> _userManager;
 
     /// <summary>
@@ -35,14 +37,14 @@ public class LoginModel : PageModel
     /// </summary>
     /// <value>The input.</value>
     [BindProperty]
-    public InputModel Input { get; set; }
+    public InputModel Input { get; set; } = null!;
 
     /// <summary>
     /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
     /// directly from your code. This API may change or be removed in future releases.
     /// </summary>
     /// <value>The external logins.</value>
-    public IList<AuthenticationScheme> ExternalLogins { get; set; }
+    public IList<AuthenticationScheme> ExternalLogins { get; set; } = null!;
 
     /// <summary>
     /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -57,16 +59,21 @@ public class LoginModel : PageModel
     /// </summary>
     /// <value>The error message.</value>
     [TempData]
-    public string ErrorMessage { get; set; }
+    public string ErrorMessage { get; set; } = null!;
 
-    public readonly IUserProvider _userProvider;
+    private readonly IUserProvider _userProvider;
+
+    private const string ReturnUrlValue = "~/";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LoginModel"/> class.
     /// </summary>
     /// <param name="signInManager">The sign in manager.</param>
     /// <param name="logger">The logger.</param>
-    public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, UserManager<ApplicationUser> userManager, IUserProvider userProvider)
+    public LoginModel(SignInManager<ApplicationUser> signInManager, 
+        ILogger<LoginModel> logger, 
+        UserManager<ApplicationUser> userManager, 
+        IUserProvider userProvider)
     {
         _signInManager = signInManager;
         _logger = logger;
@@ -84,9 +91,8 @@ public class LoginModel : PageModel
         if (!string.IsNullOrEmpty(ErrorMessage))
             ModelState.AddModelError(string.Empty, ErrorMessage);
 
-        returnUrl ??= Url.Content("~/");
+        returnUrl ??= Url.Content(ReturnUrlValue);
 
-        // Clear the existing external cookie to ensure a clean login process
         await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
         ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -101,7 +107,7 @@ public class LoginModel : PageModel
     /// <returns>A Task&lt;IActionResult&gt; representing the asynchronous operation.</returns>
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
-        returnUrl ??= Url.Content("~/");
+        returnUrl ??= Url.Content(ReturnUrlValue);
 
         ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
@@ -117,18 +123,10 @@ public class LoginModel : PageModel
                     ModelState.AddModelError(string.Empty, $"Пользователь {user.UserName} деактивирован.");
                     return Page();
                 }
-                user.LastLoginDate = DateTimeOffset.UtcNow;
-                var resultUpdate = await _userManager.UpdateAsync(user);
-                _userProvider.RoleName = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
 
-                if (resultUpdate.Succeeded)
-                {
-                    //todo: Operation result
-                }
-                else
-                {
-                    //todo: Operation result
-                }
+                await UpdateLastLoginDate(user);
+
+                _userProvider.RoleName = (await _userManager.GetRolesAsync(user)).FirstOrDefault() ?? string.Empty;
             }
 
             if (result.Succeeded)
@@ -148,19 +146,22 @@ public class LoginModel : PageModel
                 _logger.LogWarning($"User {Input.UserName} account locked out.");
 
                 ModelState.AddModelError(string.Empty, "Превышено количество неудачных попыток ввода.");
-
                 return Page();
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "Имя пользователя или пароль указаны неверно.");
-
                 return Page();
             }
         }
 
-        // If we got this far, something failed, redisplay form
         return Page();
+    }
+
+    private async Task UpdateLastLoginDate(ApplicationUser user)
+    {
+        user.LastLoginDate = DateTimeOffset.UtcNow;
+        await _userManager.UpdateAsync(user);
     }
 
     /// <summary>

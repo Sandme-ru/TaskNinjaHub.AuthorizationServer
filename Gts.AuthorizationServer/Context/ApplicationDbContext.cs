@@ -2,7 +2,6 @@
 using Gts.AuthorizationServer.Models.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Drawing;
 
 namespace Gts.AuthorizationServer.Context;
 
