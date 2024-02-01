@@ -1,4 +1,5 @@
 ﻿using Gts.AuthorizationServer.Context;
+using Gts.AuthorizationServer.Data;
 using Gts.AuthorizationServer.DependencyInjection.OpenIddict;
 using Gts.AuthorizationServer.Models.Users;
 using Microsoft.AspNetCore.DataProtection;
@@ -32,11 +33,13 @@ try
 
     const string defaultConnection = "DefaultConnection";
 
-    #elif (RELEASE)
+#elif (RELEASE)
 
     const string defaultConnection = "ReleaseConnection";
 
-    #endif
+#endif
+
+    builder.Services.AddScoped<IUserProvider, UserProvider>();
     builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
