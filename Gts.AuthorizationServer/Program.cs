@@ -142,7 +142,7 @@ try
         #if (RELEASE)
         endpoints.MapGet("/", context =>
         {
-            context.Response.Redirect("/account/login");
+            context.Response.Redirect("/identity/account/login");
             return Task.CompletedTask;
         });
         #endif
