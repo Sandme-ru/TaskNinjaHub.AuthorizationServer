@@ -139,13 +139,6 @@ try
         endpoints.MapControllers();
         endpoints.MapDefaultControllerRoute();
         endpoints.MapRazorPages();
-        #if (RELEASE)
-        endpoints.MapGet("/", context =>
-        {
-            context.Response.Redirect("/identity/account/login");
-            return Task.CompletedTask;
-        });
-        #endif
     });
     #pragma warning restore ASP0014 // Suggest using top level route registrations
 
