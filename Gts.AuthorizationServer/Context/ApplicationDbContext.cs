@@ -5,13 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gts.AuthorizationServer.Context;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>, IApplicationDbContext
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options), IApplicationDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-
-    }
-
     public void MigrateDatabase()
     {
         Database.Migrate();

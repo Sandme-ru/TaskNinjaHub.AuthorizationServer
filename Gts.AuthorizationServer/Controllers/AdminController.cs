@@ -6,26 +6,16 @@ namespace Gts.AuthorizationServer.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class AdminController : Controller
+public class AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager) : Controller
 {
-    private readonly RoleManager<ApplicationRole> _roleManager;
-
-    private readonly UserManager<ApplicationUser> _userManager;
-
-    public AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
-    {
-        _userManager = userManager;
-        _roleManager = roleManager;
-    }
-
     [HttpPost("AddRole")]
     public async Task<IActionResult> AddRoleAsync([FromQuery] string roleName)
     {
-        var roleExists = await _roleManager.RoleExistsAsync(roleName);
+        var roleExists = await roleManager.RoleExistsAsync(roleName);
 
         if (!roleExists)
         {
-            var result = await _roleManager.CreateAsync(new ApplicationRole
+            var result = await roleManager.CreateAsync(new ApplicationRole
             {
                 Id = Guid.NewGuid(),
                 Name = roleName
@@ -50,10 +40,10 @@ public class AdminController : Controller
             PhoneNumber = "89178881788",
         };
 
-        var identityResult = await _userManager.CreateAsync(admin, "qweASD123!@#qwe");
+        var identityResult = await userManager.CreateAsync(admin, "qweASD123!@#qwe");
 
         if (identityResult.Succeeded)
-            await _userManager.AddToRoleAsync(admin, "Admin");
+            await userManager.AddToRoleAsync(admin, "Admin");
 
         return Ok(identityResult);
     }

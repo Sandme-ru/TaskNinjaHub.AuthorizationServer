@@ -8,41 +8,15 @@ using OpenIddict.Validation.AspNetCore;
 
 namespace Gts.AuthorizationServer.Controllers;
 
-/// <summary>
-/// Class ResourceController.
-/// Implements the <see cref="Controller" />
-/// </summary>
-/// <seealso cref="Controller" />
 [Route("api")]
-public class ResourceController : Controller
+public class ResourceController(UserManager<ApplicationUser> userManager, ILogger<ResourceController> logger) : Controller
 {
-    /// <summary>
-    /// The user manager
-    /// </summary>
-    private readonly UserManager<ApplicationUser> _userManager;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ResourceController"/> class.
-    /// </summary>
-    /// <param name="userManager">The user manager.</param>
-    public ResourceController(UserManager<ApplicationUser> userManager, ILogger<ResourceController> logger)
-    {
-        _userManager = userManager;
-        _logger = logger;
-    }
-
-    private readonly ILogger<ResourceController> _logger;
-
-    /// <summary>
-    /// Gets the message.
-    /// </summary>
-    /// <returns>IActionResult.</returns>
     [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [HttpGet("message")]
     public async Task<IActionResult> GetMessage()
     {
-        _logger.LogInformation($"This is GetMessage method of ResourceController");
-        var user = await _userManager.FindByIdAsync(User.GetClaim(OpenIddictConstants.Claims.Subject));
+        logger.LogInformation($"This is GetMessage method of ResourceController");
+        var user = await userManager.FindByIdAsync(User.GetClaim(OpenIddictConstants.Claims.Subject));
         if (user is null)
         {
             return Challenge(

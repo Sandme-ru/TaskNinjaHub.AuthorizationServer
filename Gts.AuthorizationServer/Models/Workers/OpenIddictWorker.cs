@@ -3,29 +3,12 @@ using OpenIddict.Abstractions;
 
 namespace Gts.AuthorizationServer.Models.Workers;
 
-/// <summary>
-/// Class OpenIddictWorker.
-/// Implements the <see cref="Microsoft.Extensions.Hosting.IHostedService" />
-/// </summary>
-/// <seealso cref="Microsoft.Extensions.Hosting.IHostedService" />
 public class OpenIddictWorker : IHostedService
 {
-    /// <summary>
-    /// The service provider
-    /// </summary>
     private readonly IServiceProvider _serviceProvider;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="OpenIddictWorker"/> class.
-    /// </summary>
-    /// <param name="serviceProvider">The service provider.</param>
     public OpenIddictWorker(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
-    /// <summary>
-    /// Start as an asynchronous operation.
-    /// </summary>
-    /// <param name="cancellationToken">Indicates that the start process has been aborted.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         await using var scope = _serviceProvider.CreateAsyncScope();
@@ -81,10 +64,5 @@ public class OpenIddictWorker : IHostedService
         }
     }
 
-    /// <summary>
-    /// Triggered when the application host is performing a graceful shutdown.
-    /// </summary>
-    /// <param name="cancellationToken">Indicates that the shutdown process should no longer be graceful.</param>
-    /// <returns>Task.</returns>
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

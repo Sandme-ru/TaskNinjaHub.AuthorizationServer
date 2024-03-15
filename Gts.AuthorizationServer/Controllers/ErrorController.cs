@@ -4,24 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gts.AuthorizationServer.Controllers;
 
-/// <summary>
-/// Class ErrorController.
-/// Implements the <see cref="Controller" />
-/// </summary>
-/// <seealso cref="Controller" />
-public class ErrorController : Controller
+public class ErrorController(ILogger<ErrorController> logger) : Controller
 {
-    private readonly ILogger<ErrorController> _logger;
-
-    public ErrorController(ILogger<ErrorController> logger)
-    {
-        _logger = logger;
-    }
-
-    /// <summary>
-    /// Errors this instance.
-    /// </summary>
-    /// <returns>IActionResult.</returns>
     [Route("error")]
     [NonAction]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -32,11 +16,12 @@ public class ErrorController : Controller
         {
             return View(new ErrorViewModel());
         }
-        _logger.LogError($"Error: {response.ErrorDescription}");
+
+        logger.LogError($"Error: {response.ErrorDescription}");
         return View(new ErrorViewModel
         {
-            Error = response.Error,
-            ErrorDescription = response.ErrorDescription
+            Error = response.Error!,
+            ErrorDescription = response.ErrorDescription!
         });
     }
 }

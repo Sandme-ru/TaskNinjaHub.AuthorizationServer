@@ -7,45 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gts.AuthorizationServer.Controllers;
 
-/// <summary>
-/// Class CheckController.
-/// Implements the <see cref="Controller" />
-/// </summary>
-/// <seealso cref="Controller" />
-public class CheckController : Controller
+public class CheckController(
+    SignInManager<ApplicationUser> signInManager,
+    UserManager<ApplicationUser> userManager,
+    ILogger<CheckController> logger)
+    : Controller
 {
-    /// <summary>
-    /// The sign in manager
-    /// </summary>
-    private readonly SignInManager<ApplicationUser> _signInManager;
-
-    /// <summary>
-    /// The user manager
-    /// </summary>
-    private readonly UserManager<ApplicationUser> _userManager;
-
-    /// <summary>
-    /// The logger
-    /// </summary>
-    private readonly ILogger<CheckController> _logger;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CheckController"/> class.
-    /// </summary>
-    /// <param name="signInManager">The sign in manager.</param>
-    /// <param name="userManager">The user manager.</param>
-    /// <param name="logger">The logger.</param>
-    public CheckController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<CheckController> logger)
-    {
-        _signInManager = signInManager;
-        _userManager = userManager;
-        _logger = logger;
-    }
-
-    /// <summary>
-    /// Indexes this instance.
-    /// </summary>
-    /// <returns>IActionResult.</returns>
     public async Task<IActionResult> Index()
     {
         Request.Cookies.TryGetValue(".ASPXAUTH_EDISON_USERNAME", out var userNameCookie);
@@ -67,18 +34,18 @@ public class CheckController : Controller
 
         var userName = decryptedTicket.UserData;
 
-        var user = await _userManager.Users.FirstOrDefaultAsync(f => f.LastName + " " + f.FirstName + " " + f.MiddleName == userName);
+        var user = await userManager.Users.FirstOrDefaultAsync(f => f.LastName + " " + f.FirstName + " " + f.MiddleName == userName);
         if (user == null)
         {
-            _logger.LogWarning("Not found user {UserName}", userName);
+            logger.LogWarning("Not found user {UserName}", userName);
             return Challenge(
                 authenticationSchemes: IdentityConstants.ApplicationScheme,
                 properties: new AuthenticationProperties { RedirectUri = "/" });
         }
 
-        _logger.LogInformation("User logged in {UserName}", userName);
+        logger.LogInformation("User logged in {UserName}", userName);
 
-        await _signInManager.SignInAsync(user, isPersistent: false);
+        await signInManager.SignInAsync(user, isPersistent: false);
 
         return Json(new { userNameCookie, userName });
     }

@@ -1,6 +1,3 @@
 ﻿namespace Gts.AuthorizationServer.Context;
 
-public interface IApplicationDbContext
-{
-
-}
+public interface IApplicationDbContext;
