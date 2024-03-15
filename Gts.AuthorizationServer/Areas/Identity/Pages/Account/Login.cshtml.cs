@@ -9,83 +9,25 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Gts.AuthorizationServer.Areas.Identity.Pages.Account;
 
-/// <summary>
-/// Class LoginModel.
-/// Implements the <see cref="PageModel" />
-/// </summary>
-/// <seealso cref="PageModel" />
-public class LoginModel : PageModel
+public class LoginModel(
+    SignInManager<ApplicationUser> signInManager,
+    ILogger<LoginModel> logger,
+    UserManager<ApplicationUser> userManager,
+    IUserProvider userProvider)
+    : PageModel
 {
-    /// <summary>
-    /// The sign in manager
-    /// </summary>
-    private readonly SignInManager<ApplicationUser> _signInManager;
-
-    /// <summary>
-    /// The user manager
-    /// </summary>
-    private readonly UserManager<ApplicationUser> _userManager;
-
-    /// <summary>
-    /// The logger
-    /// </summary>
-    private readonly ILogger<LoginModel> _logger;
-
-    /// <summary>
-    /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    /// directly from your code. This API may change or be removed in future releases.
-    /// </summary>
-    /// <value>The input.</value>
     [BindProperty]
     public InputModel Input { get; set; } = null!;
 
-    /// <summary>
-    /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    /// directly from your code. This API may change or be removed in future releases.
-    /// </summary>
-    /// <value>The external logins.</value>
     public IList<AuthenticationScheme> ExternalLogins { get; set; } = null!;
 
-    /// <summary>
-    /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    /// directly from your code. This API may change or be removed in future releases.
-    /// </summary>
-    /// <value>The return URL.</value>
     public string? ReturnUrl { get; set; }
 
-    /// <summary>
-    /// This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    /// directly from your code. This API may change or be removed in future releases.
-    /// </summary>
-    /// <value>The error message.</value>
     [TempData]
     public string ErrorMessage { get; set; } = null!;
 
-    private readonly IUserProvider _userProvider;
-
     private const string ReturnUrlValue = "~/";
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LoginModel"/> class.
-    /// </summary>
-    /// <param name="signInManager">The sign in manager.</param>
-    /// <param name="logger">The logger.</param>
-    public LoginModel(SignInManager<ApplicationUser> signInManager, 
-        ILogger<LoginModel> logger, 
-        UserManager<ApplicationUser> userManager, 
-        IUserProvider userProvider)
-    {
-        _signInManager = signInManager;
-        _logger = logger;
-        _userManager = userManager;
-        _userProvider = userProvider;
-    }
-
-    /// <summary>
-    /// On get as an asynchronous operation.
-    /// </summary>
-    /// <param name="returnUrl">The return URL.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
     public async Task OnGetAsync(string? returnUrl = null!)
     {
         if (!string.IsNullOrEmpty(ErrorMessage))
@@ -95,26 +37,21 @@ public class LoginModel : PageModel
 
         await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
         ReturnUrl = returnUrl;
     }
 
-    /// <summary>
-    /// On post as an asynchronous operation.
-    /// </summary>
-    /// <param name="returnUrl">The return URL.</param>
-    /// <returns>A Task&lt;IActionResult&gt; representing the asynchronous operation.</returns>
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
         returnUrl ??= Url.Content(ReturnUrlValue);
 
-        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
         if (ModelState.IsValid)
         {
-            var result = await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: true);
-            var user = await _userManager.FindByNameAsync(Input.UserName);
+            var result = await signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+            var user = await userManager.FindByNameAsync(Input.UserName);
 
             if (user != null)
             {
@@ -126,14 +63,14 @@ public class LoginModel : PageModel
 
                 await UpdateLastLoginDate(user);
 
-                _userProvider.RoleName = (await _userManager.GetRolesAsync(user)).FirstOrDefault() ?? string.Empty;
+                userProvider.RoleName = (await userManager.GetRolesAsync(user)).FirstOrDefault() ?? string.Empty;
             }
 
             if (result.Succeeded)
             {
                 AppendCookies();
 
-                _logger.LogInformation($"User {Input.UserName} logged in.");
+                logger.LogInformation($"User {Input.UserName} logged in.");
 
                 return LocalRedirect(returnUrl);
             }
@@ -143,7 +80,7 @@ public class LoginModel : PageModel
             }
             if (result.IsLockedOut)
             {
-                _logger.LogWarning($"User {Input.UserName} account locked out.");
+                logger.LogWarning($"User {Input.UserName} account locked out.");
 
                 ModelState.AddModelError(string.Empty, "Превышено количество неудачных попыток ввода.");
                 return Page();
@@ -161,12 +98,9 @@ public class LoginModel : PageModel
     private async Task UpdateLastLoginDate(ApplicationUser user)
     {
         user.LastLoginDate = DateTimeOffset.UtcNow;
-        await _userManager.UpdateAsync(user);
+        await userManager.UpdateAsync(user);
     }
 
-    /// <summary>
-    /// Appends the cookies.
-    /// </summary>
     private void AppendCookies()
     {
         var legacyFormsAuthenticationTicketEncryptor = new LegacyFormsAuthenticationTicketEncryptor(HexUtils.HexToBinary(LegacyAuthCookieCompatDefaults.DecryptionKey), HexUtils.HexToBinary(LegacyAuthCookieCompatDefaults.ValidationKey));

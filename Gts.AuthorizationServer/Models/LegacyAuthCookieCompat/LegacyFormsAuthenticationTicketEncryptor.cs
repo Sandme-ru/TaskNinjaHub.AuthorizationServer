@@ -2,45 +2,20 @@
 
 namespace Gts.AuthorizationServer.Models.LegacyAuthCookieCompat;
 
-/// <summary>
-/// Class LegacyFormsAuthenticationTicketEncryptor.
-/// </summary>
 public class LegacyFormsAuthenticationTicketEncryptor
 {
-    /// <summary>
-    /// The default hash algorithm
-    /// </summary>
     private const ShaVersion DefaultHashAlgorithm = ShaVersion.Sha1;
 
-    /// <summary>
-    /// The default compatibility mode
-    /// </summary>
     private const CompatibilityMode DefaultCompatibilityMode = CompatibilityMode.Framework20SP2;
 
-    /// <summary>
-    /// The random number generator
-    /// </summary>
     private static RandomNumberGenerator _randomNumberGenerator;
 
-    /// <summary>
-    /// The decryption key BLOB
-    /// </summary>
     private byte[] _decryptionKeyBlob;
 
-    /// <summary>
-    /// The compatibility mode
-    /// </summary>
     private CompatibilityMode _compatibilityMode;
 
-    /// <summary>
-    /// The hasher
-    /// </summary>
     private HashProvider _hasher;
 
-    /// <summary>
-    /// Gets the random number generator.
-    /// </summary>
-    /// <value>The random number generator.</value>
     private static RandomNumberGenerator RandomNumberGenerator
     {
         get
@@ -52,13 +27,6 @@ public class LegacyFormsAuthenticationTicketEncryptor
         }
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LegacyFormsAuthenticationTicketEncryptor"/> class.
-    /// </summary>
-    /// <param name="decryptionKey">The decryption key.</param>
-    /// <param name="validationKey">The validation key.</param>
-    /// <param name="hashAlgorithm">The hash algorithm.</param>
-    /// <param name="compatibilityMode">The compatibility mode.</param>
     public LegacyFormsAuthenticationTicketEncryptor(string decryptionKey, string validationKey, ShaVersion hashAlgorithm = DefaultHashAlgorithm, CompatibilityMode compatibilityMode = DefaultCompatibilityMode)
     {
         var descriptionKeyBytes = HexUtils.HexToBinary(decryptionKey);
@@ -67,25 +35,11 @@ public class LegacyFormsAuthenticationTicketEncryptor
         Initialize(descriptionKeyBytes, validationKeyBytes, hashAlgorithm, compatibilityMode);
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LegacyFormsAuthenticationTicketEncryptor"/> class.
-    /// </summary>
-    /// <param name="decryptionKey">The decryption key.</param>
-    /// <param name="validationKey">The validation key.</param>
-    /// <param name="hashAlgorithm">The hash algorithm.</param>
-    /// <param name="compatibilityMode">The compatibility mode.</param>
     public LegacyFormsAuthenticationTicketEncryptor(byte[] decryptionKey, byte[] validationKey, ShaVersion hashAlgorithm = DefaultHashAlgorithm, CompatibilityMode compatibilityMode = DefaultCompatibilityMode)
     {
         Initialize(decryptionKey, validationKey, hashAlgorithm, compatibilityMode);
     }
 
-    /// <summary>
-    /// Initializes the specified decryption key.
-    /// </summary>
-    /// <param name="decryptionKey">The decryption key.</param>
-    /// <param name="validationKey">The validation key.</param>
-    /// <param name="hashAlgorithm">The hash algorithm.</param>
-    /// <param name="compatibilityMode">The compatibility mode.</param>
     private void Initialize(byte[] decryptionKey, byte[] validationKey, ShaVersion hashAlgorithm, CompatibilityMode compatibilityMode)
     {
         _compatibilityMode = compatibilityMode;
@@ -94,12 +48,6 @@ public class LegacyFormsAuthenticationTicketEncryptor
         _hasher = HashProvider.Create(KeyDerivator.DeriveKey(validationKey, _compatibilityMode), hashAlgorithm);
     }
 
-    /// <summary>
-    /// Decrypts the ticket
-    /// </summary>
-    /// <param name="cookieString">The cookie string.</param>
-    /// <returns>FormsAuthenticationTicket.</returns>
-    /// <exception cref="System.Exception">Invalid Hash</exception>
     public FormsAuthenticationTicket DecryptCookie(string cookieString)
     {
         byte[] cookieBlob = null!;
@@ -134,13 +82,6 @@ public class LegacyFormsAuthenticationTicketEncryptor
         return FormsAuthenticationTicketHelper.Deserialize(decryptedCookie, ticketLength);
     }
 
-    /// <summary>
-    /// Encrypts the cookie data.
-    /// </summary>
-    /// <param name="cookieBlob">The cookie BLOB.</param>
-    /// <param name="hasher">The hasher.</param>
-    /// <returns>System.Byte[].</returns>
-    /// <exception cref="System.NotImplementedException"></exception>
     private byte[] EncryptCookieData(byte[] cookieBlob, HashProvider? hasher = null)
     {
         using (var aesProvider = Aes.Create())
@@ -203,16 +144,6 @@ public class LegacyFormsAuthenticationTicketEncryptor
         }
     }
 
-    /// <summary>
-    /// Decrypts the specified cookie BLOB.
-    /// </summary>
-    /// <param name="cookieBlob">The cookie BLOB.</param>
-    /// <param name="hasher">The hasher.</param>
-    /// <param name="isHashAppended">if set to <c>true</c> [is hash appended].</param>
-    /// <returns>System.Byte[].</returns>
-    /// <exception cref="System.ArgumentNullException">hasher</exception>
-    /// <exception cref="System.Security.Cryptography.CryptographicException">Signature verification failed</exception>
-    /// <exception cref="System.Exception">Unexpected salt length: {ivLength}. Total: {paddedData.Length}</exception>
     private byte[] Decrypt(byte[] cookieBlob, HashProvider hasher, bool isHashAppended)
     {
         if (hasher == null)
@@ -225,7 +156,6 @@ public class LegacyFormsAuthenticationTicketEncryptor
                 throw new CryptographicException("Signature verification failed");
         }
 
-        // Now decrypt the encrypted cookie data.
         using (var aesProvider = Aes.Create())
         {
             aesProvider.Key = _decryptionKeyBlob;
@@ -274,11 +204,6 @@ public class LegacyFormsAuthenticationTicketEncryptor
         }
     }
 
-    /// <summary>
-    /// Roundups the number bits to number bytes.
-    /// </summary>
-    /// <param name="numBits">The number bits.</param>
-    /// <returns>System.Int32.</returns>
     internal static int RoundupNumBitsToNumBytes(int numBits)
     {
         if (numBits < 0)
@@ -286,16 +211,6 @@ public class LegacyFormsAuthenticationTicketEncryptor
         return (numBits / 8) + (((numBits & 7) != 0) ? 1 : 0);
     }
 
-    /// <summary>
-    /// Encrypts the ticket, and if a hasher is provided, will also include a signature in the encrypted data.
-    /// </summary>
-    /// <param name="ticket">The ticket.</param>
-    /// <param name="randomiseUsingHash">If true, the hash of the encrypted data will be prepended to the beginning, otherwise random bytes will be generated and prepended to the beggining.</param>
-    /// <returns>System.String.</returns>
-    /// <exception cref="System.Exception">Invalid ticket</exception>
-    /// <exception cref="System.Exception">Unable to get HMACSHAHash</exception>
-    /// <exception cref="System.Exception">Unable to encrypt cookie</exception>
-    /// <exception cref="System.Exception">Unable to sign cookie</exception>
     public string Encrypt(FormsAuthenticationTicket ticket, bool randomiseUsingHash = false)
     {
         var ticketBlob = FormsAuthenticationTicketHelper.Serialize(ticket);

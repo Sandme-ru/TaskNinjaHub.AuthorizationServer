@@ -3,22 +3,10 @@ using System.Text;
 
 namespace Gts.AuthorizationServer.Models.LegacyAuthCookieCompat;
 
-/// <summary>
-/// Class KeyDerivator.
-/// </summary>
 static class KeyDerivator
 {
-    /// <summary>
-    /// The secure ut f8 encoding
-    /// </summary>
     public static readonly UTF8Encoding SecureUTF8Encoding = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
-    /// <summary>
-    /// Derives the key.
-    /// </summary>
-    /// <param name="keyDerivationKey">The key derivation key.</param>
-    /// <param name="compatibilityMode">The compatibility mode.</param>
-    /// <returns>System.Byte[].</returns>
     public static byte[] DeriveKey(byte[] keyDerivationKey, CompatibilityMode compatibilityMode)
     {
         if (compatibilityMode == CompatibilityMode.Framework20SP2)
@@ -36,11 +24,6 @@ static class KeyDerivator
         }
     }
 
-    /// <summary>
-    /// Gets the key derivation parameters.
-    /// </summary>
-    /// <param name="label">The label.</param>
-    /// <param name="context">The context.</param>
     private static void GetKeyDerivationParameters(out byte[] label, out byte[] context)
     {
         label = SecureUTF8Encoding.GetBytes("FormsAuthentication.Ticket");
@@ -51,14 +34,6 @@ static class KeyDerivator
         }
     }
 
-    /// <summary>
-    /// Derives the key implementation.
-    /// </summary>
-    /// <param name="hmac">The hmac.</param>
-    /// <param name="label">The label.</param>
-    /// <param name="context">The context.</param>
-    /// <param name="keyLengthInBits">The key length in bits.</param>
-    /// <returns>System.Byte[].</returns>
     private static byte[] DeriveKeyImpl(HMAC hmac, byte[] label, byte[] context, int keyLengthInBits)
     {
         checked
@@ -69,45 +44,33 @@ static class KeyDerivator
 
             if (labelLength != 0)
             {
-                Buffer.BlockCopy(label, 0, buffer, 4, labelLength); // the 4 accounts for the [i]_2 length
+                Buffer.BlockCopy(label, 0, buffer, 4, labelLength);
             }
             if (contextLength != 0)
             {
-                Buffer.BlockCopy(context, 0, buffer, 5 + labelLength, contextLength); // the '5 +' accounts for the [i]_2 length, the label, and the 0x00 byte
+                Buffer.BlockCopy(context, 0, buffer, 5 + labelLength, contextLength);
             }
-            WriteUInt32ToByteArrayBigEndian((uint)keyLengthInBits, buffer, 5 + labelLength + contextLength); // the '5 +' accounts for the [i]_2 length, the label, the 0x00 byte, and the context
-
-            // Initialization
+            WriteUInt32ToByteArrayBigEndian((uint)keyLengthInBits, buffer, 5 + labelLength + contextLength);
 
             var numBytesWritten = 0;
             var numBytesRemaining = keyLengthInBits / 8;
             var output = new byte[numBytesRemaining];
 
-            // Calculate each K_i value and copy the leftmost bits to the output buffer as appropriate.
-
             for (uint i = 1; numBytesRemaining > 0; i++)
             {
-                WriteUInt32ToByteArrayBigEndian(i, buffer, 0); // set the first 32 bits of the buffer to be the current iteration value
+                WriteUInt32ToByteArrayBigEndian(i, buffer, 0);
                 var K_i = hmac.ComputeHash(buffer);
 
-                // copy the leftmost bits of K_i into the output buffer
                 var numBytesToCopy = Math.Min(numBytesRemaining, K_i.Length);
                 Buffer.BlockCopy(K_i, 0, output, numBytesWritten, numBytesToCopy);
                 numBytesWritten += numBytesToCopy;
                 numBytesRemaining -= numBytesToCopy;
             }
 
-            // finished
             return output;
         }
     }
 
-    /// <summary>
-    /// Writes the u int32 to byte array big endian.
-    /// </summary>
-    /// <param name="value">The value.</param>
-    /// <param name="buffer">The buffer.</param>
-    /// <param name="offset">The offset.</param>
     private static void WriteUInt32ToByteArrayBigEndian(uint value, byte[] buffer, int offset)
     {
         buffer[offset + 0] = (byte)(value >> 24);

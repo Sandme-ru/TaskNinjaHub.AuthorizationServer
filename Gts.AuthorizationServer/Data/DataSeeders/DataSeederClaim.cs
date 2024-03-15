@@ -1,5 +1,4 @@
-﻿using System.Net.Mime;
-using Gts.AuthorizationServer.Models.Users;
+﻿using Gts.AuthorizationServer.Models.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gts.AuthorizationServer.Data.DataSeeders;

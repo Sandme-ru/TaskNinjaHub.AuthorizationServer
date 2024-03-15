@@ -8,36 +8,25 @@ using Microsoft.EntityFrameworkCore;
 namespace Gts.AuthorizationServer.Controllers;
 
 [Route("[controller]/[action]")]
-public class UsersController : Controller
+public class UsersController(
+    UserManager<ApplicationUser> userManager,
+    RoleManager<ApplicationRole> roleManager,
+    ILogger<UserinfoController> logger,
+    IAuthorizationService authorizationService)
+    : Controller
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-
-    private readonly RoleManager<ApplicationRole> _roleManager;
-
-    private readonly ILogger<UserinfoController> _logger;
-
-    private readonly IAuthorizationService _authorizationService;
-    
-    public UsersController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ILogger<UserinfoController> logger, IAuthorizationService authorizationService)
-    {
-        _userManager = userManager;
-        _roleManager = roleManager;
-        _logger = logger;
-        _authorizationService = authorizationService;
-    }
-
-    public IActionResult Index() => View(_userManager.Users.ToList());
+    public IActionResult Index() => View(userManager.Users.ToList());
 
     public async Task<IActionResult> Create()
     {
-        ViewBag.Roles = await _roleManager.Roles.ToListAsync();
+        ViewBag.Roles = await roleManager.Roles.ToListAsync();
         return View();
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(CreateUserViewModel model)
     {
-        _logger.LogInformation($"This is Create method of UsersController");
+        logger.LogInformation($"This is Create method of UsersController");
 
         if (ModelState.IsValid)
         {
@@ -52,8 +41,8 @@ public class UsersController : Controller
                 CreateDate = DateTimeOffset.UtcNow
             };
 
-            var result = await _userManager.CreateAsync(createdUser, model.Password);
-            var identityResult = await _userManager.AddToRoleAsync(createdUser, model.SelectedRole);
+            var result = await userManager.CreateAsync(createdUser, model.Password);
+            var identityResult = await userManager.AddToRoleAsync(createdUser, model.SelectedRole);
 
             if (result.Succeeded && identityResult.Succeeded)
                 return RedirectToAction("Index");
@@ -62,17 +51,17 @@ public class UsersController : Controller
                     ModelState.AddModelError(string.Empty, error.Description);
         }
 
-        ViewBag.Roles = await _roleManager.Roles.ToListAsync();
+        ViewBag.Roles = await roleManager.Roles.ToListAsync();
         return View(model);
     }
 
     public async Task<IActionResult> Edit(string id)
     {
-        _logger.LogInformation($"This is Edit method of UsersController");
+        logger.LogInformation($"This is Edit method of UsersController");
 
-        ViewBag.Roles = await _roleManager.Roles.ToListAsync();
+        ViewBag.Roles = await roleManager.Roles.ToListAsync();
 
-        var editedUser = await _userManager.FindByIdAsync(id);
+        var editedUser = await userManager.FindByIdAsync(id);
 
         if (editedUser == null)
             return NotFound();
@@ -86,7 +75,7 @@ public class UsersController : Controller
             MiddleName = editedUser.MiddleName!,
             PhoneNumber = editedUser.PhoneNumber!,
             IsActive = editedUser.IsActive,
-            SelectedRole = (await _userManager.GetRolesAsync(editedUser)).FirstOrDefault()!
+            SelectedRole = (await userManager.GetRolesAsync(editedUser)).FirstOrDefault()!
         };
 
         return View(model);
@@ -95,11 +84,11 @@ public class UsersController : Controller
     [HttpPost]
     public async Task<IActionResult> Edit(EditUserViewModel model)
     {
-        _logger.LogInformation($"This is Edit method of UsersController");
+        logger.LogInformation($"This is Edit method of UsersController");
 
         if (ModelState.IsValid)
         {
-            var user = await _userManager.FindByIdAsync(model.Id.ToString());
+            var user = await userManager.FindByIdAsync(model.Id.ToString());
 
             if (user != null)
             {
@@ -110,11 +99,11 @@ public class UsersController : Controller
                 user.PhoneNumber = model.PhoneNumber;
                 user.IsActive = model.IsActive;
 
-                var roles = await _userManager.GetRolesAsync(user);
-                var removeRolesResult = await _userManager.RemoveFromRolesAsync(user, roles);
+                var roles = await userManager.GetRolesAsync(user);
+                var removeRolesResult = await userManager.RemoveFromRolesAsync(user, roles);
 
-                var addRoleResult = await _userManager.AddToRoleAsync(user, model.SelectedRole);
-                var updateUserResult = await _userManager.UpdateAsync(user);
+                var addRoleResult = await userManager.AddToRoleAsync(user, model.SelectedRole);
+                var updateUserResult = await userManager.UpdateAsync(user);
 
                 if (removeRolesResult.Succeeded && addRoleResult.Succeeded && updateUserResult.Succeeded)
                     return RedirectToAction("Index");
@@ -124,7 +113,7 @@ public class UsersController : Controller
             }
         }
 
-        ViewBag.Roles = await _roleManager.Roles.ToListAsync();
+        ViewBag.Roles = await roleManager.Roles.ToListAsync();
 
         return View(model);
     }
@@ -132,16 +121,16 @@ public class UsersController : Controller
     [HttpPost]
     public async Task<ActionResult> ChangeStatus(string id)
     {
-        var authorizationResult = await _authorizationService.AuthorizeAsync(User, "ChangeUserStatus");
+        var authorizationResult = await authorizationService.AuthorizeAsync(User, "ChangeUserStatus");
 
         if (authorizationResult.Succeeded)
         {
-            _logger.LogInformation($"This is Delete method of UsersController");
-            var user = await _userManager.FindByIdAsync(id);
+            logger.LogInformation($"This is Delete method of UsersController");
+            var user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 user.IsActive = !user.IsActive;
-                var result = await _userManager.UpdateAsync(user);
+                var result = await userManager.UpdateAsync(user);
                 if (result.Succeeded)
                     return RedirectToAction("Index");
             }
@@ -149,9 +138,8 @@ public class UsersController : Controller
                 ModelState.AddModelError(string.Empty, "Ошибка деактивации");
         }
         else
-        {
             ModelState.AddModelError(string.Empty, "У вас нет прав на совершение этой операции");
-        }
+
         return RedirectToAction("Index");
     }
 }
