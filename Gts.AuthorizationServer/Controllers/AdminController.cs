@@ -8,6 +8,49 @@ namespace Gts.AuthorizationServer.Controllers;
 [ApiController]
 public class AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager) : Controller
 {
+    [HttpPost("EditUser")]
+    public async Task<IActionResult> EditUser([FromBody] AuthorDto user)
+    {
+        var editedUser = await userManager.FindByIdAsync(user.Id.ToString());
+
+        if (editedUser == null)
+        {
+            return NotFound();
+        }
+
+        if (editedUser.Email != user.Name)
+        {
+            editedUser.Email = user.Name;
+        }
+
+        if (!string.IsNullOrEmpty(user.Password))
+        {
+            var passwordValidator = new PasswordValidator<ApplicationUser>();
+            var identityResult = await passwordValidator.ValidateAsync(userManager, editedUser, user.Password);
+            if (identityResult.Succeeded)
+            {
+                var token = await userManager.GeneratePasswordResetTokenAsync(editedUser);
+                var passwordChangeResult = await userManager.ResetPasswordAsync(editedUser, token, user.Password);
+                if (!passwordChangeResult.Succeeded)
+                {
+                    return BadRequest("Password is invalid");
+                }
+            }
+            else
+            {
+                return BadRequest(string.Join('\n', identityResult.Errors));
+            }
+        }
+
+        var result = await userManager.UpdateAsync(editedUser);
+        if (!result.Succeeded)
+        {
+            return BadRequest(string.Join('\n', result.Errors));
+        }
+
+        return Ok();
+    }
+
     [HttpPost("AddRole")]
     public async Task<IActionResult> AddRoleAsync([FromQuery] string roleName)
     {
