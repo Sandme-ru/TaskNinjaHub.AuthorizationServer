@@ -43,7 +43,7 @@ public class OpenIddictWorker : IHostedService
                 PostLogoutRedirectUris =
                 {
                     new Uri("https://localhost:7063/signout-callback-oidc"),
-                    new Uri("https://sandme.ru/task-ninja-hub/signout-callback-oidc"),
+                    new Uri("https://sandme.ru/signout-callback-oidc"),
                 },
                 Permissions =
                 {
