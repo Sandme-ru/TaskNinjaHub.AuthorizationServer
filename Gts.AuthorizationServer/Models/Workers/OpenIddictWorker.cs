@@ -38,7 +38,7 @@ public class OpenIddictWorker : IHostedService
                     new Uri("https://sandme.ru/task-ninja-hub/signin-oidc"),
                     new Uri("https://sandme.ru"),
                     new Uri("https://sandme.ru/signin-oidc"),
-                        
+                    new Uri("http://127.0.0.1/TaskNinjaHub.Desktop"),
                 },
                 PostLogoutRedirectUris =
                 {
