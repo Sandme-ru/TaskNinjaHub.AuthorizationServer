@@ -2,9 +2,9 @@
 
 public class BaseResult
 {
-    public bool success { get; set; }
+    public bool Success { get; set; }
 
-    public object result { get; set; }
+    public object Result { get; set; }
 
-    public string error { get; set; }
+    public string Error { get; set; }
 }

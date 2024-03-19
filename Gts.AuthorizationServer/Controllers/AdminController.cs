@@ -1,4 +1,5 @@
-﻿using Gts.AuthorizationServer.Models.Users;
+﻿using Gts.AuthorizationServer.Models.Bases;
+using Gts.AuthorizationServer.Models.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,14 +15,10 @@ public class AdminController(UserManager<ApplicationUser> userManager, RoleManag
         var editedUser = await userManager.FindByIdAsync(user.Id.ToString());
 
         if (editedUser == null)
-        {
             return NotFound();
-        }
 
         if (editedUser.Email != user.Name)
-        {
             editedUser.Email = user.Name;
-        }
 
         if (!string.IsNullOrEmpty(user.Password))
         {
@@ -33,12 +30,20 @@ public class AdminController(UserManager<ApplicationUser> userManager, RoleManag
                 var passwordChangeResult = await userManager.ResetPasswordAsync(editedUser, token, user.Password);
                 if (!passwordChangeResult.Succeeded)
                 {
-                    return BadRequest("Password is invalid");
+                    return BadRequest(new BaseResult
+                    {
+                        Success = false,
+                        Error = "Password is invalid"
+                    });
                 }
             }
             else
             {
-                return BadRequest(string.Join('\n', identityResult.Errors));
+                return BadRequest(new BaseResult
+                {
+                    Success = false,
+                    Error = string.Join('\n', identityResult.Errors.Select(error => error.Description))
+                });
             }
         }
 
