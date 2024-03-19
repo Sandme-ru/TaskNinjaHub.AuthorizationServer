@@ -20,6 +20,9 @@ public class AdminController(UserManager<ApplicationUser> userManager, RoleManag
         if (editedUser.Email != user.Name)
             editedUser.Email = user.Name;
 
+        if(editedUser.LocalizationType != user.LocalizationType)
+            editedUser.LocalizationType = user.LocalizationType;
+
         if (!string.IsNullOrEmpty(user.Password))
         {
             var passwordValidator = new PasswordValidator<ApplicationUser>();
@@ -50,10 +53,17 @@ public class AdminController(UserManager<ApplicationUser> userManager, RoleManag
         var result = await userManager.UpdateAsync(editedUser);
         if (!result.Succeeded)
         {
-            return BadRequest(string.Join('\n', result.Errors));
+            return BadRequest(new BaseResult
+            {
+                Success = false,
+                Error = string.Join('\n', result.Errors.Select(error => error.Description))
+            });
         }
 
-        return Ok();
+        return Ok(new BaseResult
+        {
+            Success = true
+        });
     }
 
     [HttpPost("AddRole")]
