@@ -1,3 +1,4 @@
+using Gts.AuthorizationServer.Models.Localization;
 using Gts.AuthorizationServer.Models.Users;
 using Gts.AuthorizationServer.ViewModels.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -17,9 +18,16 @@ public class UsersController(
 {
     public IActionResult Index() => View(userManager.Users.ToList());
 
+    private readonly Dictionary<LocalizationType, string> _localizationTypes = new()
+    {
+        { LocalizationType.Russian, "Русский" },
+        { LocalizationType.English, "English"}
+    };
+
     public async Task<IActionResult> Create()
     {
         ViewBag.Roles = await roleManager.Roles.ToListAsync();
+        ViewBag.LocalizationTypes = _localizationTypes;
         return View();
     }
 
@@ -38,7 +46,8 @@ public class UsersController(
                 LastName = model.LastName,
                 MiddleName = model.MiddleName,
                 PhoneNumber = model.PhoneNumber,
-                CreateDate = DateTimeOffset.UtcNow
+                CreateDate = DateTimeOffset.UtcNow,
+                LocalizationType = model.SelectedLocalizationType
             };
 
             var result = await userManager.CreateAsync(createdUser, model.Password);
@@ -52,6 +61,7 @@ public class UsersController(
         }
 
         ViewBag.Roles = await roleManager.Roles.ToListAsync();
+        ViewBag.LocalizationTypes = _localizationTypes;
         return View(model);
     }
 
@@ -60,6 +70,7 @@ public class UsersController(
         logger.LogInformation($"This is Edit method of UsersController");
 
         ViewBag.Roles = await roleManager.Roles.ToListAsync();
+        ViewBag.LocalizationTypes = _localizationTypes;
 
         var editedUser = await userManager.FindByIdAsync(id);
 
@@ -75,7 +86,8 @@ public class UsersController(
             MiddleName = editedUser.MiddleName!,
             PhoneNumber = editedUser.PhoneNumber!,
             IsActive = editedUser.IsActive,
-            SelectedRole = (await userManager.GetRolesAsync(editedUser)).FirstOrDefault()!
+            SelectedRole = (await userManager.GetRolesAsync(editedUser)).FirstOrDefault()!,
+            SelectedLocalizationType = editedUser.LocalizationType
         };
 
         return View(model);
@@ -98,6 +110,7 @@ public class UsersController(
                 user.MiddleName = model.MiddleName;
                 user.PhoneNumber = model.PhoneNumber;
                 user.IsActive = model.IsActive;
+                user.LocalizationType = model.SelectedLocalizationType;
 
                 var roles = await userManager.GetRolesAsync(user);
                 var removeRolesResult = await userManager.RemoveFromRolesAsync(user, roles);
@@ -114,6 +127,7 @@ public class UsersController(
         }
 
         ViewBag.Roles = await roleManager.Roles.ToListAsync();
+        ViewBag.LocalizationTypes = _localizationTypes;
 
         return View(model);
     }
