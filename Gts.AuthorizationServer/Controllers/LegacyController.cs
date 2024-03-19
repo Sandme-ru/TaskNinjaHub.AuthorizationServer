@@ -13,7 +13,7 @@ public class LegacyController(
     ILogger<LegacyController> logger)
     : Controller
 {
-    public async Task<IActionResult> Login(string returnUrl = null)
+    public async Task<IActionResult> Login(string returnUrl = null!)
     {
         returnUrl ??= Url.Content("~/");
 

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Gts.AuthorizationServer.Models.Localization;
 using Microsoft.AspNetCore.Identity;
 
 namespace Gts.AuthorizationServer.Models.Users;
@@ -21,4 +22,6 @@ public class ApplicationUser : IdentityUser<Guid>
 
     [PersonalData]
     public DateTimeOffset LastLoginDate { get; set; }
+
+    public LocalizationType LocalizationType { get; set; }
 }

@@ -39,6 +39,15 @@
         </select>
     </div>
     <div class="mb-3">
+        <label class="form-label">Выберите язык</label>
+        <select asp-for="SelectedLocalizationType" class="form-select" name="selectedLocalizationType">
+            @foreach (var localizationType in ViewBag.LocalizationTypes)
+            {
+                <option value="@localizationType.Key">@localizationType.Value</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
         <input type="submit" value="Добавить" class="btn btn-primary btn-login" />
     </div>
 </form>

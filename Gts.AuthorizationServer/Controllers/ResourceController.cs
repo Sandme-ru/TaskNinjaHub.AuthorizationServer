@@ -16,7 +16,7 @@ public class ResourceController(UserManager<ApplicationUser> userManager, ILogge
     public async Task<IActionResult> GetMessage()
     {
         logger.LogInformation($"This is GetMessage method of ResourceController");
-        var user = await userManager.FindByIdAsync(User.GetClaim(OpenIddictConstants.Claims.Subject));
+        var user = await userManager.FindByIdAsync(User.GetClaim(OpenIddictConstants.Claims.Subject)!);
         if (user is null)
         {
             return Challenge(
@@ -26,7 +26,7 @@ public class ResourceController(UserManager<ApplicationUser> userManager, ILogge
                     [OpenIddictValidationAspNetCoreConstants.Properties.Error] = OpenIddictConstants.Errors.InvalidToken,
                     [OpenIddictValidationAspNetCoreConstants.Properties.ErrorDescription] =
                         "The specified access token is bound to an account that no longer exists."
-                }));
+                }!));
         }
 
         return Content($"{user.UserName} has been successfully authenticated.");

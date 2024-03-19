@@ -15,7 +15,7 @@ public class UserinfoController(UserManager<ApplicationUser> userManager, ILogge
     public async Task<IActionResult> Userinfo()
     {
         logger.LogInformation($"This is GetMessage method of UserinfoController");
-        var user = await userManager.FindByIdAsync(User.GetClaim(OpenIddictConstants.Claims.Subject));
+        var user = await userManager.FindByIdAsync(User.GetClaim(OpenIddictConstants.Claims.Subject)!);
         if (user is null)
         {
             return Challenge(
@@ -25,7 +25,7 @@ public class UserinfoController(UserManager<ApplicationUser> userManager, ILogge
                     [OpenIddictServerAspNetCoreConstants.Properties.Error] = OpenIddictConstants.Errors.InvalidToken,
                     [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
                         "The specified access token is bound to an account that no longer exists."
-                }));
+                }!));
         }
 
         var claims = new Dictionary<string, object>(StringComparer.Ordinal)
@@ -35,13 +35,13 @@ public class UserinfoController(UserManager<ApplicationUser> userManager, ILogge
 
         if (User.HasScope(OpenIddictConstants.Permissions.Scopes.Email))
         {
-            claims[OpenIddictConstants.Claims.Email] = await userManager.GetEmailAsync(user);
+            claims[OpenIddictConstants.Claims.Email] = (await userManager.GetEmailAsync(user))!;
             claims[OpenIddictConstants.Claims.EmailVerified] = await userManager.IsEmailConfirmedAsync(user);
         }
 
         if (User.HasScope(OpenIddictConstants.Permissions.Scopes.Phone))
         {
-            claims[OpenIddictConstants.Claims.PhoneNumber] = await userManager.GetPhoneNumberAsync(user);
+            claims[OpenIddictConstants.Claims.PhoneNumber] = (await userManager.GetPhoneNumberAsync(user))!;
             claims[OpenIddictConstants.Claims.PhoneNumberVerified] = await userManager.IsPhoneNumberConfirmedAsync(user);
         }
 
