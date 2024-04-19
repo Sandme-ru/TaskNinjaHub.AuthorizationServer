@@ -76,8 +76,8 @@ try
 
     #endregion
     
-    //builder.Services.AddDataProtection()
-    //    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "Keys")));
+    builder.Services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "Keys")));
 
     builder.Services.AddControllersWithViews();
     builder.Services.AddRazorPages();
