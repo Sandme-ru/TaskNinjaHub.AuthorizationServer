@@ -1,7 +1,6 @@
 using Gts.AuthorizationServer.Models.Localization;
 using Gts.AuthorizationServer.Models.Users;
 using Gts.AuthorizationServer.ViewModels.Users;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +11,7 @@ namespace Gts.AuthorizationServer.Controllers;
 public class UsersController(
     UserManager<ApplicationUser> userManager,
     RoleManager<ApplicationRole> roleManager,
-    ILogger<UserinfoController> logger,
-    IAuthorizationService authorizationService)
+    ILogger<UserinfoController> logger)
     : Controller
 {
     public IActionResult Index() => View(userManager.Users.ToList());
@@ -28,6 +26,7 @@ public class UsersController(
     {
         ViewBag.Roles = await roleManager.Roles.ToListAsync();
         ViewBag.LocalizationTypes = _localizationTypes;
+
         return View();
     }
 
@@ -62,12 +61,13 @@ public class UsersController(
 
         ViewBag.Roles = await roleManager.Roles.ToListAsync();
         ViewBag.LocalizationTypes = _localizationTypes;
+
         return View(model);
     }
 
     public async Task<IActionResult> Edit(string id)
     {
-        logger.LogInformation($"This is Edit method of UsersController");
+        logger.LogInformation("This is Edit method of UsersController");
 
         ViewBag.Roles = await roleManager.Roles.ToListAsync();
         ViewBag.LocalizationTypes = _localizationTypes;
@@ -76,7 +76,7 @@ public class UsersController(
 
         if (editedUser == null)
             return NotFound();
-        
+
         var model = new EditUserViewModel
         {
             Id = editedUser.Id,
@@ -96,7 +96,7 @@ public class UsersController(
     [HttpPost]
     public async Task<IActionResult> Edit(EditUserViewModel model)
     {
-        logger.LogInformation($"This is Edit method of UsersController");
+        logger.LogInformation("This is Edit method of UsersController");
 
         if (ModelState.IsValid)
         {
@@ -135,24 +135,19 @@ public class UsersController(
     [HttpPost]
     public async Task<ActionResult> ChangeStatus(string id)
     {
-        var authorizationResult = await authorizationService.AuthorizeAsync(User, "ChangeUserStatus");
+        logger.LogInformation("This is Delete method of UsersController");
 
-        if (authorizationResult.Succeeded)
+        var user = await userManager.FindByIdAsync(id);
+
+        if (user != null)
         {
-            logger.LogInformation($"This is Delete method of UsersController");
-            var user = await userManager.FindByIdAsync(id);
-            if (user != null)
-            {
-                user.IsActive = !user.IsActive;
-                var result = await userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                    return RedirectToAction("Index");
-            }
-            else
-                ModelState.AddModelError(string.Empty, "Ошибка деактивации");
+            user.IsActive = !user.IsActive;
+            var result = await userManager.UpdateAsync(user);
+            if (result.Succeeded)
+                return RedirectToAction("Index");
         }
         else
-            ModelState.AddModelError(string.Empty, "У вас нет прав на совершение этой операции");
+            ModelState.AddModelError(string.Empty, "Ошибка деактивации");
 
         return RedirectToAction("Index");
     }
