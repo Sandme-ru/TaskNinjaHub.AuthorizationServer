@@ -1,16 +1,101 @@
 ﻿using Gts.AuthorizationServer.Models.Bases;
 using Gts.AuthorizationServer.Models.Users;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gts.AuthorizationServer.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager) : Controller
+public class AdminController(UserManager<ApplicationUser> userManager, UserManager<UserDto> userDtoManager, RoleManager<ApplicationRole> roleManager, IdentityDbContext context) : Controller
 {
+    [HttpPost("AddRole")]
+    public async Task<IActionResult> AddRoleAsync([FromQuery] string roleName)
+    {
+        var roleExists = await roleManager.RoleExistsAsync(roleName);
+
+        if (!roleExists)
+        {
+            var result = await roleManager.CreateAsync(new ApplicationRole
+            {
+                Id = Guid.NewGuid(),
+                Name = roleName
+            });
+
+            return Ok(result);
+        }
+
+        return BadRequest(roleExists);
+    }
+
+    [HttpGet("GetRoles")]
+    public async Task<List<IdentityRole>> GetRolesAsync()
+    {
+        var roles = await context.Roles.ToListAsync();
+
+        if (roles.Any())
+            return roles;
+
+        return new List<IdentityRole>();
+    }
+
+    [HttpPut("EditRole")]
+    public async Task<bool> EditRoleAsync(ApplicationRole role)
+    {
+        var roleExists = await roleManager.FindByIdAsync(role.Id.ToString());
+
+        if (roleExists != null)
+        {
+            await roleManager.UpdateAsync(role);
+            return true;
+        }
+
+        return false;
+    }
+
+    [HttpDelete("DeleteRole")]
+    public async Task<IActionResult> DeleteRoleAsync([FromQuery] string roleId)
+    {
+        var roleExists = await roleManager.FindByIdAsync(roleId);
+
+        if (roleExists != null)
+        {
+            var result = roleManager.DeleteAsync(roleExists);
+            return Ok(result);
+        }
+
+        return BadRequest(roleExists);
+    }
+
+    [HttpGet("GetUsers")]
+    public async Task<List<IdentityUser>> GetUsersAsync()
+    {
+        var users = await context.Users.ToListAsync();
+
+        if (users.Any())
+            return users;
+
+        return new List<IdentityUser>();
+    }
+
+    [HttpDelete("DeleteUser")]
+    public async Task<bool> DeleteUserAsync(string id)
+    {
+        var user = await userManager.FindByIdAsync(id);
+
+        if (user != null!)
+        {
+            await userManager.DeleteAsync(user);
+            return true;
+        }
+        else
+            return false;
+    }
+
     [HttpPost("EditUser")]
-    public async Task<IActionResult> EditUser([FromBody] AuthorDto user)
+    public async Task<IActionResult> EditUserAsync([FromBody] AuthorDto user)
     {
         var editedUser = await userManager.FindByIdAsync(user.Id.ToString());
 
@@ -20,7 +105,7 @@ public class AdminController(UserManager<ApplicationUser> userManager, RoleManag
         if (editedUser.Email != user.Name)
             editedUser.Email = user.Name;
 
-        if(editedUser.LocalizationType != user.LocalizationType)
+        if (editedUser.LocalizationType != user.LocalizationType)
             editedUser.LocalizationType = user.LocalizationType;
 
         if (!string.IsNullOrEmpty(user.Password))
@@ -66,23 +151,15 @@ public class AdminController(UserManager<ApplicationUser> userManager, RoleManag
         });
     }
 
-    [HttpPost("AddRole")]
-    public async Task<IActionResult> AddRoleAsync([FromQuery] string roleName)
+    [HttpPost("AddUser")]
+    public async Task<IActionResult> AddUserAsync(UserDto user)
     {
-        var roleExists = await roleManager.RoleExistsAsync(roleName);
+        var identityResult = await userDtoManager.CreateAsync(user, user.Password);
 
-        if (!roleExists)
-        {
-            var result = await roleManager.CreateAsync(new ApplicationRole
-            {
-                Id = Guid.NewGuid(),
-                Name = roleName
-            });
+        if (identityResult.Succeeded)
+            await userDtoManager.AddToRoleAsync(user, user.Role);
 
-            return Ok(result);
-        }
-
-        return BadRequest(roleExists);
+        return Ok(identityResult);
     }
 
     [HttpPost("AddFakeAdmin")]
