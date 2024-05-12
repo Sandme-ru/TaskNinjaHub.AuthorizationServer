@@ -1,7 +1,7 @@
-﻿using Gts.AuthorizationServer.Models.Bases;
+﻿using Gts.AuthorizationServer.Context;
+using Gts.AuthorizationServer.Models.Bases;
 using Gts.AuthorizationServer.Models.Users;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +9,7 @@ namespace Gts.AuthorizationServer.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class AdminController(UserManager<ApplicationUser> userManager, UserManager<UserDto> userDtoManager, RoleManager<ApplicationRole> roleManager, IdentityDbContext context) : Controller
+public class AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ApplicationDbContext context) : Controller
 {
     [HttpPost("AddRole")]
     public async Task<IActionResult> AddRoleAsync([FromQuery] string roleName)
@@ -31,24 +31,25 @@ public class AdminController(UserManager<ApplicationUser> userManager, UserManag
     }
 
     [HttpGet("GetRoles")]
-    public async Task<List<IdentityRole>> GetRolesAsync()
+    public async Task<List<ApplicationRole>> GetRolesAsync()
     {
         var roles = await context.Roles.ToListAsync();
 
         if (roles.Any())
             return roles;
 
-        return new List<IdentityRole>();
+        return new List<ApplicationRole>();
     }
 
     [HttpPut("EditRole")]
-    public async Task<bool> EditRoleAsync(ApplicationRole role)
+    public async Task<bool> EditRoleAsync([FromQuery] string roleId, [FromQuery] string newName)
     {
-        var roleExists = await roleManager.FindByIdAsync(role.Id.ToString());
+        var roleExists = await roleManager.FindByIdAsync(roleId.ToString());
 
         if (roleExists != null)
         {
-            await roleManager.UpdateAsync(role);
+            roleExists.Name = newName;
+            await roleManager.UpdateAsync(roleExists);
             return true;
         }
 
@@ -70,18 +71,18 @@ public class AdminController(UserManager<ApplicationUser> userManager, UserManag
     }
 
     [HttpGet("GetUsers")]
-    public async Task<List<IdentityUser>> GetUsersAsync()
+    public async Task<List<ApplicationUser>> GetUsersAsync()
     {
         var users = await context.Users.ToListAsync();
 
         if (users.Any())
             return users;
 
-        return new List<IdentityUser>();
+        return new List<ApplicationUser>();
     }
 
     [HttpDelete("DeleteUser")]
-    public async Task<bool> DeleteUserAsync(string id)
+    public async Task<bool> DeleteUserAsync([FromQuery] string id)
     {
         var user = await userManager.FindByIdAsync(id);
 
@@ -94,7 +95,7 @@ public class AdminController(UserManager<ApplicationUser> userManager, UserManag
             return false;
     }
 
-    [HttpPost("EditUser")]
+    [HttpPut("EditUser")]
     public async Task<IActionResult> EditUserAsync([FromBody] AuthorDto user)
     {
         var editedUser = await userManager.FindByIdAsync(user.Id.ToString());
@@ -152,12 +153,22 @@ public class AdminController(UserManager<ApplicationUser> userManager, UserManag
     }
 
     [HttpPost("AddUser")]
-    public async Task<IActionResult> AddUserAsync(UserDto user)
+    public async Task<IActionResult> AddUserAsync([FromBody] UserDto userDto)
     {
-        var identityResult = await userDtoManager.CreateAsync(user, user.Password);
+        var user = new ApplicationUser
+        {
+            Email = userDto.Email,
+            FirstName = userDto.FirstName,
+            LastName = userDto.LastName,
+            MiddleName = userDto.MiddleName,
+            UserName = userDto.UserName,
+            PhoneNumber = userDto.PhoneNumber
+        };
+
+        var identityResult = await userManager.CreateAsync(user, userDto.Password);
 
         if (identityResult.Succeeded)
-            await userDtoManager.AddToRoleAsync(user, user.Role);
+            await userManager.AddToRoleAsync(user, userDto.Role);
 
         return Ok(identityResult);
     }
