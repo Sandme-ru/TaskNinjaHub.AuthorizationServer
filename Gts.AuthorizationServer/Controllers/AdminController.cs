@@ -27,7 +27,7 @@ public class AdminController(UserManager<ApplicationUser> userManager, RoleManag
             return Ok(result);
         }
 
-        return BadRequest("Такая роль уже сузествует");
+        return BadRequest("Такая роль уже существует");
     }
 
     [HttpGet("GetRoles")]
