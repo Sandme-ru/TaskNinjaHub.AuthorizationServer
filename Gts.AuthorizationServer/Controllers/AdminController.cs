@@ -27,7 +27,7 @@ public class AdminController(UserManager<ApplicationUser> userManager, RoleManag
             return Ok(result);
         }
 
-        return BadRequest(roleExists);
+        return BadRequest("Такая роль уже существует");
     }
 
     [HttpGet("GetRoles")]
@@ -237,6 +237,8 @@ public class AdminController(UserManager<ApplicationUser> userManager, RoleManag
 
         if (identityResult.Succeeded)
             await userManager.AddToRoleAsync(user, userDto.Role);
+        else
+            return BadRequest("Произошла ошибка на стороне сервера авторизации. Обратитесь в службу поддержки shvyrkalovm@mail.ru.");
 
         return Ok(identityResult);
     }
