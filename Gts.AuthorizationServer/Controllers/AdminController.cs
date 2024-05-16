@@ -168,7 +168,7 @@ public class AdminController(UserManager<ApplicationUser> userManager, RoleManag
     [HttpPost("EditUserInfo")]
     public async Task<IActionResult> EditUserInfoAsync([FromBody] UserDto userDto)
     {
-        var editedUser = await userManager.FindByEmailAsync(userDto.Email.ToString());
+        var editedUser = await userManager.FindByIdAsync(userDto.Id);
 
         if (editedUser == null)
             return NotFound();

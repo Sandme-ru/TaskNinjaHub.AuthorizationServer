@@ -1,11 +1,8 @@
-﻿using Gts.AuthorizationServer.Models.Localization;
-using Microsoft.AspNetCore.Identity;
-using System.ComponentModel;
-
-namespace Gts.AuthorizationServer.Models.Users;
+﻿namespace Gts.AuthorizationServer.Models.Users;
 
 public class UserDto
 {
+    public string Id { get; set; }
     public virtual string UserName { get; set; }
     public virtual string Email { get; set; }
     public virtual string PhoneNumber { get; set; }
