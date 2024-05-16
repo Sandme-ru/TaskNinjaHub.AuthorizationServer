@@ -202,11 +202,7 @@ public class AdminController(UserManager<ApplicationUser> userManager, RoleManag
             }
             else
             {
-                return BadRequest(new BaseResult
-                {
-                    Success = false,
-                    Error = string.Join('\n', identityResult.Errors.Select(error => error.Description))
-                });
+                return BadRequest("Произошла ошибка на стороне сервера авторизации. Обратитесь в службу поддержки shvyrkalovm@mail.ru.");
             }
         }
 
